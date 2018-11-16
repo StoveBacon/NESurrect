@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+NESurrect/NESurrect.vcxproj.user
+NESurrect/NESurrect.vcxproj.filters
+NESurrect/NESurrect.sln
+NESurrect/.vs/NESurrect/v15/.suo
+NESurrect/NESurrect.vcxproj
+NESurrect/.vs/NESurrect/v15/Browse.VC.db
+NESurrect/.vs/NESurrect/v15/Browse.VC.opendb
+NESurrect/.vs/
+NESurrect/x64/

@@ -2,7 +2,9 @@
 
 int main() {
 	CPU::Core core;
-	core.ExecuteInstruction();
+	for (;;) {
+		core.ExecuteInstruction();
+	}
 	
 	return 0;
 }

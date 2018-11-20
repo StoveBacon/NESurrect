@@ -16,10 +16,11 @@ public:
 	}
 
 	uint16_t ReadWord(const uint16_t address) {
-		uint16_t offsetAddress = MapAddress(address, ranges...);
-		uint16_t retval = Read(offsetAddress);
+		const uint16_t offsetAddress = MapAddress(address, ranges...);
+		uint16_t retval = Read(offsetAddress + 1);
 		retval = retval << 8;
-		retval = retval | (offsetAddress == ZeroPageBoundary) ? Read(0x00) : Read(offsetAddress + 1);
+		// retval = retval | ((offsetAddress == ZeroPageBoundary) ? Read(0x00) : Read(offsetAddress)); TODO Implement hardware bug here
+		retval = retval | Read(offsetAddress);
 		return retval;
 	}
 
@@ -30,8 +31,8 @@ public:
 	void WriteWord(const uint16_t address, const uint16_t data) {
 		uint16_t offsetAddress = MapAddress(address, ranges...);
 		// 6502 is little-endian, so bytes have to be written backwards
-		data_[offsetAddress] = (data & 0xFF00) >> 8;
-		data_[offsetAddress - 1] = (data & 0x00FF);
+		data_[offsetAddress + 1] = (data & 0xFF00) >> 8;
+		data_[offsetAddress] = (data & 0x00FF);
 	}
 private:
 	template <typename... Rest>

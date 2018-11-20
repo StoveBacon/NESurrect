@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <bitset>
 
 namespace CPU {
 	static constexpr uint16_t StackOffset = 0x100;
@@ -11,6 +12,7 @@ namespace CPU {
 		void SetCarry(uint8_t value);
 		void SetOverflow(uint8_t value);
 		void SetInterrupt(uint8_t value);
+		void SetDecimal(uint8_t value);
 		uint8_t Carry();
 		uint8_t Negative();
 		uint8_t Overflow();
@@ -24,7 +26,9 @@ namespace CPU {
 		uint8_t P;
 
 	private:
-		static constexpr uint8_t CarryMask = 0b0000;
+		void SetBit(uint8_t mask, uint8_t value);
+
+		static constexpr uint8_t CarryMask = 0b0001;
 		static constexpr uint8_t ZeroMask = 0b0010;
 		static constexpr uint8_t InterruptDisMask = 0b0100;
 		static constexpr uint8_t DecimalMask = 0b1000;

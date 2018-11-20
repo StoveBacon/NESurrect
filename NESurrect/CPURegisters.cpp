@@ -1,23 +1,33 @@
 #include "CPURegisters.h"
 
 namespace CPU {
+	void CPURegisters::SetBit(uint8_t mask, uint8_t value) {
+		if (value == 0) {
+			P = P & ~mask;
+		} else {
+			P = P | mask;
+		}
+	}
 	void CPURegisters::SetIfZero(uint8_t value) {
-		P = P | ((value == 0) ? ZeroMask : 0U);
+		SetBit(ZeroMask, value == 0);
 	}
 	void CPURegisters::SetIfNegative(uint8_t value) {
-		P = P | ((value & NegativeMask) > 0 ? NegativeMask : 0U);
+		SetBit(NegativeMask, (value >> 7) == 1);
 	}
 	void CPURegisters::SetZero(uint8_t value) {
-		P = P | ((value > 0)) ? ZeroMask : 0U;
+		SetBit(ZeroMask, value);
 	}
 	void CPURegisters::SetCarry(uint8_t value) {
-		P = P | ((value > 0)) ? CarryMask : 0U;
+		SetBit(CarryMask, value);
 	}
 	void CPURegisters::SetOverflow(uint8_t value) {
-		P = P | ((value > 0)) ? OverflowMask : 0U;
+		SetBit(OverflowMask, value);
 	}
 	void CPURegisters::SetInterrupt(uint8_t value) {
-		P = P | ((value > 0)) ? InterruptDisMask : 0U;
+		SetBit(InterruptDisMask, value);
+	}
+	void CPURegisters::SetDecimal(uint8_t value) {
+		SetBit(DecimalMask, value);
 	}
 	uint8_t CPURegisters::Carry() {
 		return ((P & CarryMask) > 0);

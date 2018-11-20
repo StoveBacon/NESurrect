@@ -1,9 +1,22 @@
 #include "Core.h"
 
 namespace CPU {
+	Core::Core() {
+		Reset();
+	}
+	void Core::Reset() {
+		constexpr uint16_t ResetVector = 0xFFFC;
+		constexpr uint8_t StatusDefault = 0x24;
+		constexpr uint8_t SPDefault = 0xFD;
+		reg_.PC = mem_.ReadWord(ResetVector);
+		reg_.P = StatusDefault;
+		reg_.S = SPDefault;
+	}
 	void Core::ExecuteInstruction() {
 		Instruction ins;
-		switch (mem_.Read(reg_.PC)) {
+		ins.opcode = mem_.Read(reg_.PC);
+		reg_.PC++;
+		switch (ins.opcode) {
 		case 0x01: ORA(IndirectX(ins)); break;
 		case 0x05: ORA(ZeroPage(ins)); break;
 		case 0x09: ORA(Immediate(ins)); break;
@@ -133,6 +146,24 @@ namespace CPU {
 
 		case 0x4C: JMP(Absolute(ins)); break;
 
+		case 0x84: STY(ZeroPage(ins)); break;
+		case 0x8C: STY(Absolute(ins)); break;
+		case 0x94: STY(ZeroPageX(ins)); break;
+
+		case 0xA0: LDY(Immediate(ins)); break;
+		case 0xA4: LDY(ZeroPage(ins)); break;
+		case 0xAC: LDY(Absolute(ins)); break;
+		case 0xB4: LDY(ZeroPageX(ins)); break;
+		case 0xBC: LDY(AbsoluteX(ins)); break;
+
+		case 0xC0: CPY(Immediate(ins)); break;
+		case 0xC4: CPY(ZeroPage(ins)); break;
+		case 0xCC: CPY(Absolute(ins)); break;
+
+		case 0xE0: CPX(Immediate(ins)); break;
+		case 0xE4: CPX(ZeroPage(ins)); break;
+		case 0xEC: CPX(Absolute(ins)); break;
+
 		case 0x6C: JMP(); break;
 		case 0x20: JSR(); break;
 		case 0x10: BPL(); break;
@@ -168,6 +199,7 @@ namespace CPU {
 		case 0xBA: TSX(); break;
 		case 0xCA: DEX(); break;
 		case 0xEA: NOP(); break;
+		default: break;
 		}
 	}
 
@@ -185,16 +217,16 @@ namespace CPU {
 	}
 	void Core::ADC(const Instruction& ins) {
 		uint8_t result = reg_.A + ins.value + reg_.Carry();
-		SetIfZeroAndNegative(reg_.A, reg_);
-		reg_.SetOverflow((result & 0x80) != (reg_.A & 0x80));
+		SetIfZeroAndNegative(result, reg_);
+		reg_.SetOverflow(((ins.value & 0x80) == (reg_.A & 0x80)) && ((result & 0x80) != (reg_.A & 0x80)));
 		reg_.SetCarry(result < reg_.A);
 		reg_.A = result;
 	}
 	void Core::STA(const Instruction& ins) {
-		mem_.Write(ins.value, reg_.A);
+		mem_.Write(ins.address, reg_.A);
 	}
 	void Core::LDA(const Instruction& ins) {
-		reg_.A = mem_.Read(ins.value);
+		reg_.A = ins.value;
 		SetIfZeroAndNegative(reg_.A, reg_);
 	}
 	void Core::CMP(const Instruction& ins) {
@@ -271,9 +303,9 @@ namespace CPU {
 		SetIfZeroAndNegative(ins.value + 1, reg_);
 	}
 	void Core::BIT(const Instruction& ins) {
-		uint8_t value = reg_.A & ins.value;
-		SetIfZeroAndNegative(value, reg_);
-		reg_.SetOverflow(value & 0x40);
+		reg_.SetIfZero(reg_.A & ins.value);
+		reg_.SetIfNegative(ins.value);
+		reg_.SetOverflow(ins.value & 0x40);
 	}
 	void Core::JMP(const Instruction& ins) {
 		reg_.PC = ins.address;
@@ -293,7 +325,6 @@ namespace CPU {
 	}
 	void Core::JMP() {
 		uint16_t operand = mem_.ReadWord(reg_.PC);
-
 		// Simulate a hardware bug where crossing a page wraps instead of going through
 		if ((operand & 0xFF) == 0xFF) {
 			reg_.PC = mem_.Read(operand);
@@ -305,7 +336,7 @@ namespace CPU {
 	void Core::JSR() {
 		uint16_t operand = mem_.ReadWord(reg_.PC);
 		reg_.PC++;
-		mem_.WriteWord(reg_.S + StackOffset, reg_.PC);
+		mem_.WriteWord(reg_.S + StackOffset - 1, reg_.PC);
 		reg_.S -= 2;
 		reg_.PC = operand;
 	}
@@ -313,37 +344,37 @@ namespace CPU {
 		BranchIfClear(reg_.Negative());
 	}
 	void Core::BMI() {
-		BranchIfClear(~reg_.Negative());
+		BranchIfSet(reg_.Negative());
 	}
 	void Core::BVC() {
 		BranchIfClear(reg_.Overflow());
 	}
 	void Core::BVS() {
-		BranchIfClear(~reg_.Overflow());
+		BranchIfSet(reg_.Overflow());
 	}
 	void Core::BCC() {
 		BranchIfClear(reg_.Carry());
 	}
 	void Core::BCS() {
-		BranchIfClear(~reg_.Carry());
+		BranchIfSet(reg_.Carry());
 	}
 	void Core::BNE() {
 		BranchIfClear(reg_.Zero());
 	}
 	void Core::BEQ() {
-		BranchIfClear(~reg_.Zero());
+		BranchIfSet(reg_.Zero());
 	}
 	void Core::BRK() {
 		// TODO
 	}
 	void Core::RTI() {
 		reg_.S += 3;
-		reg_.PC = mem_.ReadWord(reg_.S + StackOffset);
+		reg_.PC = mem_.ReadWord(reg_.S + StackOffset - 1);
 		reg_.P = mem_.Read(reg_.S + StackOffset - 2);
 	}
 	void Core::RTS() {
 		reg_.S += 2;
-		reg_.PC = mem_.ReadWord(reg_.S + StackOffset);
+		reg_.PC = mem_.ReadWord(reg_.S + StackOffset - 1);
 		reg_.PC++;
 	}
 	void Core::PHP() {
@@ -400,10 +431,10 @@ namespace CPU {
 		reg_.SetOverflow(0U);
 	}
 	void Core::CLD() {
-		// TODO
+		reg_.SetDecimal(0);
 	}
 	void Core::SED() {
-		// TODO
+		reg_.SetDecimal(1);
 	}
 	void Core::TXA() {
 		reg_.A = reg_.X;
@@ -418,6 +449,7 @@ namespace CPU {
 	}
 	void Core::TSX() {
 		reg_.X = reg_.S;
+		SetIfZeroAndNegative(reg_.X, reg_);
 	}
 	void Core::DEX() {
 		reg_.X--;
@@ -426,6 +458,8 @@ namespace CPU {
 	void Core::NOP() {
 		// No operation
 	}
+
+	// **Helper functions**
 	void Core::Compare(uint8_t a, uint8_t b) {
 		reg_.SetCarry(a >= b);
 		reg_.SetZero(a == b);
@@ -438,10 +472,16 @@ namespace CPU {
 	void Core::BranchIfClear(uint8_t value) {
 		// Inverting the bits will check if set
 		uint8_t offset = Relative(mem_.Read(reg_.PC));
-		reg_.PC += (value & 0x01) ? offset : 0U;
+		reg_.PC += value == 0 ? offset : 0U;
+		reg_.PC++;
+	}
+	void Core::BranchIfSet(uint8_t value) {
+		uint8_t offset = Relative(mem_.Read(reg_.PC));
+		reg_.PC += value == 1 ? offset : 0U;
 		reg_.PC++;
 	}
 
+	// **Addressing modes**
 	const Instruction Core::ZeroPageX(Instruction& ins) {
 		ins.address = mem_.Read(reg_.PC) + reg_.X;
 		ins.value = mem_.Read(ins.address);

@@ -5,13 +5,19 @@
 namespace CPU {
 	struct Instruction {
 		Instruction() : value(0), address(0), isAccumulator(false) {}
+		uint8_t opcode;
 		uint8_t value;
 		uint16_t address;
 		bool isAccumulator;
 	};
+
 	class Core {
 	public:
+		Core();
+		void Reset();
 		void ExecuteInstruction();
+
+		
 	private:
 		CPURegisters reg_;
 		CPUMemory mem_;
@@ -89,8 +95,9 @@ namespace CPU {
 		void DEX();
 		void NOP();
 
-		void Compare(uint8_t a, uint8_t b);
 		uint8_t Relative(uint8_t address);
+		void Compare(uint8_t a, uint8_t b);
 		void BranchIfClear(uint8_t value);
+		void BranchIfSet(uint8_t value);
 	};
 }

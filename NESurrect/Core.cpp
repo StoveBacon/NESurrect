@@ -2,138 +2,139 @@
 
 namespace CPU {
 	void Core::ExecuteInstruction() {
+		Instruction ins;
 		switch (mem_.Read(reg_.PC)) {
-		case 0x01: ORA(IndirectX()); break;
-		case 0x05: ORA(ZeroPage()); break;
-		case 0x09: ORA(Immediate()); break;
-		case 0x0D: ORA(Absolute()); break;
-		case 0x11: ORA(IndirectY()); break;
-		case 0x15: ORA(ZeroPageX()); break;
-		case 0x19: ORA(AbsoluteY()); break;
-		case 0x1D: ORA(AbsoluteX()); break;
+		case 0x01: ORA(IndirectX(ins)); break;
+		case 0x05: ORA(ZeroPage(ins)); break;
+		case 0x09: ORA(Immediate(ins)); break;
+		case 0x0D: ORA(Absolute(ins)); break;
+		case 0x11: ORA(IndirectY(ins)); break;
+		case 0x15: ORA(ZeroPageX(ins)); break;
+		case 0x19: ORA(AbsoluteY(ins)); break;
+		case 0x1D: ORA(AbsoluteX(ins)); break;
 
-		case 0x21: AND(IndirectX()); break;
-		case 0x25: AND(ZeroPage()); break;
-		case 0x29: AND(Immediate()); break;
-		case 0x2D: AND(Absolute()); break;
-		case 0x31: AND(IndirectY()); break;
-		case 0x35: AND(ZeroPageX()); break;
-		case 0x39: AND(AbsoluteY()); break;
-		case 0x3D: AND(AbsoluteX()); break;
+		case 0x21: AND(IndirectX(ins)); break;
+		case 0x25: AND(ZeroPage(ins)); break;
+		case 0x29: AND(Immediate(ins)); break;
+		case 0x2D: AND(Absolute(ins)); break;
+		case 0x31: AND(IndirectY(ins)); break;
+		case 0x35: AND(ZeroPageX(ins)); break;
+		case 0x39: AND(AbsoluteY(ins)); break;
+		case 0x3D: AND(AbsoluteX(ins)); break;
 
-		case 0x41: EOR(IndirectX()); break;
-		case 0x45: EOR(ZeroPage()); break;
-		case 0x49: EOR(Immediate()); break;
-		case 0x4D: EOR(Absolute()); break;
-		case 0x51: EOR(IndirectY()); break;
-		case 0x55: EOR(ZeroPageX()); break;
-		case 0x59: EOR(AbsoluteY()); break;
-		case 0x5D: EOR(AbsoluteX()); break;
+		case 0x41: EOR(IndirectX(ins)); break;
+		case 0x45: EOR(ZeroPage(ins)); break;
+		case 0x49: EOR(Immediate(ins)); break;
+		case 0x4D: EOR(Absolute(ins)); break;
+		case 0x51: EOR(IndirectY(ins)); break;
+		case 0x55: EOR(ZeroPageX(ins)); break;
+		case 0x59: EOR(AbsoluteY(ins)); break;
+		case 0x5D: EOR(AbsoluteX(ins)); break;
 
-		case 0x61: ADC(IndirectX()); break;
-		case 0x65: ADC(ZeroPage()); break;
-		case 0x69: ADC(Immediate()); break;
-		case 0x6D: ADC(Absolute()); break;
-		case 0x71: ADC(IndirectY()); break;
-		case 0x75: ADC(ZeroPageX()); break;
-		case 0x79: ADC(AbsoluteY()); break;
-		case 0x7D: ADC(AbsoluteX()); break;
+		case 0x61: ADC(IndirectX(ins)); break;
+		case 0x65: ADC(ZeroPage(ins)); break;
+		case 0x69: ADC(Immediate(ins)); break;
+		case 0x6D: ADC(Absolute(ins)); break;
+		case 0x71: ADC(IndirectY(ins)); break;
+		case 0x75: ADC(ZeroPageX(ins)); break;
+		case 0x79: ADC(AbsoluteY(ins)); break;
+		case 0x7D: ADC(AbsoluteX(ins)); break;
 
-		case 0x81: STA(IndirectX()); break;
-		case 0x85: STA(ZeroPage()); break;
-		// case 0x89: STA(Immediate()); break; Illegal
-		case 0x8D: STA(Absolute()); break;
-		case 0x91: STA(IndirectY()); break;
-		case 0x95: STA(ZeroPageX()); break;
-		case 0x99: STA(AbsoluteY()); break;
-		case 0x9D: STA(AbsoluteX()); break;
+		case 0x81: STA(IndirectX(ins)); break;
+		case 0x85: STA(ZeroPage(ins)); break;
+		// case 0x89: STA(Immediate(ins)); break; Illegal
+		case 0x8D: STA(Absolute(ins)); break;
+		case 0x91: STA(IndirectY(ins)); break;
+		case 0x95: STA(ZeroPageX(ins)); break;
+		case 0x99: STA(AbsoluteY(ins)); break;
+		case 0x9D: STA(AbsoluteX(ins)); break;
 
-		case 0xA1: LDA(IndirectX()); break;
-		case 0xA5: LDA(ZeroPage()); break;
-		case 0xA9: LDA(Immediate()); break;
-		case 0xAD: LDA(Absolute()); break;
-		case 0xB1: LDA(IndirectY()); break;
-		case 0xB5: LDA(ZeroPageX()); break;
-		case 0xB9: LDA(AbsoluteY()); break;
-		case 0xBD: LDA(AbsoluteX()); break;
+		case 0xA1: LDA(IndirectX(ins)); break;
+		case 0xA5: LDA(ZeroPage(ins)); break;
+		case 0xA9: LDA(Immediate(ins)); break;
+		case 0xAD: LDA(Absolute(ins)); break;
+		case 0xB1: LDA(IndirectY(ins)); break;
+		case 0xB5: LDA(ZeroPageX(ins)); break;
+		case 0xB9: LDA(AbsoluteY(ins)); break;
+		case 0xBD: LDA(AbsoluteX(ins)); break;
 
-		case 0xC1: CMP(IndirectX()); break;
-		case 0xC5: CMP(ZeroPage()); break;
-		case 0xC9: CMP(Immediate()); break;
-		case 0xCD: CMP(Absolute()); break;
-		case 0xD1: CMP(IndirectY()); break;
-		case 0xD5: CMP(ZeroPageX()); break;
-		case 0xD9: CMP(AbsoluteY()); break;
-		case 0xDD: CMP(AbsoluteX()); break;
+		case 0xC1: CMP(IndirectX(ins)); break;
+		case 0xC5: CMP(ZeroPage(ins)); break;
+		case 0xC9: CMP(Immediate(ins)); break;
+		case 0xCD: CMP(Absolute(ins)); break;
+		case 0xD1: CMP(IndirectY(ins)); break;
+		case 0xD5: CMP(ZeroPageX(ins)); break;
+		case 0xD9: CMP(AbsoluteY(ins)); break;
+		case 0xDD: CMP(AbsoluteX(ins)); break;
 
-		case 0xE1: SBC(IndirectX()); break;
-		case 0xE5: SBC(ZeroPage()); break;
-		case 0xE9: SBC(Immediate()); break;
-		case 0xED: SBC(Absolute()); break;
-		case 0xF1: SBC(IndirectY()); break;
-		case 0xF5: SBC(ZeroPageX()); break;
-		case 0xF9: SBC(AbsoluteY()); break;
-		case 0xFD: SBC(AbsoluteX()); break;
+		case 0xE1: SBC(IndirectX(ins)); break;
+		case 0xE5: SBC(ZeroPage(ins)); break;
+		case 0xE9: SBC(Immediate(ins)); break;
+		case 0xED: SBC(Absolute(ins)); break;
+		case 0xF1: SBC(IndirectY(ins)); break;
+		case 0xF5: SBC(ZeroPageX(ins)); break;
+		case 0xF9: SBC(AbsoluteY(ins)); break;
+		case 0xFD: SBC(AbsoluteX(ins)); break;
 
-		// case 0x02: ASL(Immediate()); break; Illegal
-		case 0x06: ASL(ZeroPage()); break;
-		case 0x0A: ASL(Accumulator()); break;
-		case 0x0E: ASL(Absolute()); break;
-		case 0x16: ASL(ZeroPageX()); break;
-		case 0x1E: ASL(AbsoluteX()); break;
+		// case 0x02: ASL(Immediate(ins)); break; Illegal
+		case 0x06: ASL(ZeroPage(ins)); break;
+		case 0x0A: ASL(Accumulator(ins)); break;
+		case 0x0E: ASL(Absolute(ins)); break;
+		case 0x16: ASL(ZeroPageX(ins)); break;
+		case 0x1E: ASL(AbsoluteX(ins)); break;
 
-		// case 0x22: ROL(Immediate()); break; Illegal
-		case 0x26: ROL(ZeroPage()); break;
-		case 0x2A: ROL(Accumulator()); break;
-		case 0x2E: ROL(Absolute()); break;
-		case 0x36: ROL(ZeroPageX()); break;
-		case 0x3E: ROL(AbsoluteX()); break;
+		// case 0x22: ROL(Immediate(ins)); break; Illegal
+		case 0x26: ROL(ZeroPage(ins)); break;
+		case 0x2A: ROL(Accumulator(ins)); break;
+		case 0x2E: ROL(Absolute(ins)); break;
+		case 0x36: ROL(ZeroPageX(ins)); break;
+		case 0x3E: ROL(AbsoluteX(ins)); break;
 
-		// case 0x42: LSR(Immediate()); break; Illegal
-		case 0x46: LSR(ZeroPage()); break;
-		case 0x4A: LSR(Accumulator()); break;
-		case 0x4E: LSR(Absolute()); break;
-		case 0x56: LSR(ZeroPageX()); break;
-		case 0x5E: LSR(AbsoluteX()); break;
+		// case 0x42: LSR(Immediate(ins)); break; Illegal
+		case 0x46: LSR(ZeroPage(ins)); break;
+		case 0x4A: LSR(Accumulator(ins)); break;
+		case 0x4E: LSR(Absolute(ins)); break;
+		case 0x56: LSR(ZeroPageX(ins)); break;
+		case 0x5E: LSR(AbsoluteX(ins)); break;
 
-		// case 0x62: ROR(Immediate()); break; Illegal
-		case 0x66: ROR(ZeroPage()); break;
-		case 0x6A: ROR(Accumulator()); break;
-		case 0x6E: ROR(Absolute()); break;
-		case 0x76: ROR(ZeroPageX()); break;
-		case 0x7E: ROR(AbsoluteX()); break;
+		// case 0x62: ROR(Immediate(ins)); break; Illegal
+		case 0x66: ROR(ZeroPage(ins)); break;
+		case 0x6A: ROR(Accumulator(ins)); break;
+		case 0x6E: ROR(Absolute(ins)); break;
+		case 0x76: ROR(ZeroPageX(ins)); break;
+		case 0x7E: ROR(AbsoluteX(ins)); break;
 
-		// case 0x82: STX(Immediate()); break; Illegal
-		case 0x86: STX(ZeroPage()); break;
-		case 0x8E: STX(Absolute()); break;
-		case 0x96: STX(ZeroPageY()); break;
-		// case 0x9E: STX(IndirectY()); break; Illegal
+		// case 0x82: STX(Immediate(ins)); break; Illegal
+		case 0x86: STX(ZeroPage(ins)); break;
+		case 0x8E: STX(Absolute(ins)); break;
+		case 0x96: STX(ZeroPageY(ins)); break;
+		// case 0x9E: STX(IndirectY(ins)); break; Illegal
 
-		case 0xA2: LDX(Immediate()); break;
-		case 0xA6: LDX(ZeroPage()); break;
-		case 0xAE: LDX(Absolute()); break;
-		case 0xB6: LDX(ZeroPageY()); break;
-		case 0xBE: LDX(AbsoluteY()); break;
+		case 0xA2: LDX(Immediate(ins)); break;
+		case 0xA6: LDX(ZeroPage(ins)); break;
+		case 0xAE: LDX(Absolute(ins)); break;
+		case 0xB6: LDX(ZeroPageY(ins)); break;
+		case 0xBE: LDX(AbsoluteY(ins)); break;
 
-		// case 0xC2: DEC(Immediate()); break; Illegal
-		case 0xC6: DEC(ZeroPage()); break;
-		case 0xCE: DEC(Absolute()); break;
-		case 0xD6: DEC(ZeroPageX()); break;
-		case 0xDE: DEC(AbsoluteX()); break;
+		// case 0xC2: DEC(Immediate(ins)); break; Illegal
+		case 0xC6: DEC(ZeroPage(ins)); break;
+		case 0xCE: DEC(Absolute(ins)); break;
+		case 0xD6: DEC(ZeroPageX(ins)); break;
+		case 0xDE: DEC(AbsoluteX(ins)); break;
 
-		// case 0xE2: INC(Immediate()); break; Illegal
-		case 0xE6: INC(ZeroPage()); break;
-		case 0xEE: INC(Absolute()); break;
-		case 0xF6: INC(ZeroPageX()); break;
-		case 0xFE: INC(AbsoluteX()); break;
+		// case 0xE2: INC(Immediate(ins)); break; Illegal
+		case 0xE6: INC(ZeroPage(ins)); break;
+		case 0xEE: INC(Absolute(ins)); break;
+		case 0xF6: INC(ZeroPageX(ins)); break;
+		case 0xFE: INC(AbsoluteX(ins)); break;
 
-		case 0x24: BIT(ZeroPage()); break;
-		case 0x2C: BIT(Absolute()); break;
+		case 0x24: BIT(ZeroPage(ins)); break;
+		case 0x2C: BIT(Absolute(ins)); break;
 
-		case 0x4C: JMP(Absolute()); break;
+		case 0x4C: JMP(Absolute(ins)); break;
 
-		case 0x6C: JMPAbs(); break;
-		case 0x20: JSRAbs(); break;
+		case 0x6C: JMP(); break;
+		case 0x20: JSR(); break;
 		case 0x10: BPL(); break;
 		case 0x30: BMI(); break;
 		case 0x50: BVC(); break;
@@ -170,73 +171,333 @@ namespace CPU {
 		}
 	}
 
-	void Core::ORA(uint8_t value) {
-		reg_.A = reg_.A | value;
+	void Core::ORA(const Instruction& ins) {
+		reg_.A = reg_.A | ins.value;
 		SetIfZeroAndNegative(reg_.A, reg_);
 	}
-	void Core::AND(uint8_t value) {
-		reg_.A = reg_.A & value;
+	void Core::AND(const Instruction& ins) {
+		reg_.A = reg_.A & ins.value;
 		SetIfZeroAndNegative(reg_.A, reg_);
 	}
-	void Core::EOR(uint8_t value) {
-		reg_.A = reg_.A ^ value;
+	void Core::EOR(const Instruction& ins) {
+		reg_.A = reg_.A ^ ins.value;
 		SetIfZeroAndNegative(reg_.A, reg_);
 	}
-	void Core::ADC(uint8_t value) {
+	void Core::ADC(const Instruction& ins) {
+		uint8_t result = reg_.A + ins.value + reg_.Carry();
+		SetIfZeroAndNegative(reg_.A, reg_);
+		reg_.SetOverflow((result & 0x80) != (reg_.A & 0x80));
+		reg_.SetCarry(result < reg_.A);
+		reg_.A = result;
+	}
+	void Core::STA(const Instruction& ins) {
+		mem_.Write(ins.value, reg_.A);
+	}
+	void Core::LDA(const Instruction& ins) {
+		reg_.A = mem_.Read(ins.value);
+		SetIfZeroAndNegative(reg_.A, reg_);
+	}
+	void Core::CMP(const Instruction& ins) {
+		Compare(reg_.A, ins.value);
+	}
+	void Core::SBC(const Instruction& ins) {
+		Instruction temp = ins;
+		temp.value ^= 0xFF;
+		ADC(temp);
+	}
+	void Core::ASL(const Instruction& ins) {
+		if (ins.isAccumulator) {
+			reg_.SetCarry(reg_.A & 0x80);
+			reg_.A = reg_.A << 1;
+			SetIfZeroAndNegative(reg_.A, reg_);
+		} else {
+			uint8_t shifted = ins.value << 1;
+			reg_.SetCarry(ins.value & 0x80);
+			mem_.Write(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg_);
+		}
+	}
+	void Core::ROL(const Instruction& ins) {
+		if (ins.isAccumulator) {
+			uint8_t shifted = (reg_.A << 1) | reg_.Carry();
+			reg_.SetCarry(reg_.A & 0x80);
+			reg_.A = shifted;
+			SetIfZeroAndNegative(shifted, reg_);
+		} else {
+			uint8_t shifted = (ins.value << 1) | reg_.Carry();
+			reg_.SetCarry(ins.value & 0x80);
+			mem_.Write(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg_);
+		}
+	}
+	void Core::LSR(const Instruction& ins) {
+		if (ins.isAccumulator) {
+			reg_.SetCarry(reg_.A & 0x01);
+			reg_.A = reg_.A >> 1;
+			SetIfZeroAndNegative(reg_.A, reg_);
+		} else {
+			uint8_t shifted = ins.value >> 1;
+			reg_.SetCarry(ins.value & 0x01);
+			mem_.Write(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg_);
+		}
+	}
+	void Core::ROR(const Instruction& ins) {
+		if (ins.isAccumulator) {
+			uint8_t shifted = (reg_.A >> 1) | (reg_.Carry() << 7);
+			reg_.SetCarry(reg_.A & 0x01);
+			reg_.A = shifted;
+			SetIfZeroAndNegative(reg_.A, reg_);
+		} else {
+			uint8_t shifted = (ins.value >> 1) | (reg_.Carry() << 7);
+			reg_.SetCarry(ins.value & 0x01);
+			mem_.Write(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg_);
+		}
+	}
+	void Core::STX(const Instruction& ins) {
+		mem_.Write(ins.address, reg_.X);
+	}
+	void Core::LDX(const Instruction& ins) {
+		reg_.X = ins.value;
+		SetIfZeroAndNegative(reg_.X, reg_);
+	}
+	void Core::DEC(const Instruction& ins) {
+		mem_.Write(ins.address, ins.value - 1);
+		SetIfZeroAndNegative(ins.value - 1, reg_);
+	}
+	void Core::INC(const Instruction& ins) {
+		mem_.Write(ins.address, ins.value + 1);
+		SetIfZeroAndNegative(ins.value + 1, reg_);
+	}
+	void Core::BIT(const Instruction& ins) {
+		uint8_t value = reg_.A & ins.value;
+		SetIfZeroAndNegative(value, reg_);
+		reg_.SetOverflow(value & 0x40);
+	}
+	void Core::JMP(const Instruction& ins) {
+		reg_.PC = ins.address;
+	}
+	void Core::STY(const Instruction& ins) {
+		mem_.Write(ins.address, reg_.Y);
+	}
+	void Core::LDY(const Instruction& ins) {
+		reg_.Y = ins.value;
+		SetIfZeroAndNegative(reg_.Y, reg_);
+	}
+	void Core::CPY(const Instruction& ins) {
+		Compare(reg_.Y, ins.value);
+	}
+	void Core::CPX(const Instruction& ins) {
+		Compare(reg_.X, ins.value);
+	}
+	void Core::JMP() {
+		uint16_t operand = mem_.ReadWord(reg_.PC);
+
+		// Simulate a hardware bug where crossing a page wraps instead of going through
+		if ((operand & 0xFF) == 0xFF) {
+			reg_.PC = mem_.Read(operand);
+			reg_.PC += mem_.Read(operand & 0xFF00) << 8;
+		} else {
+			reg_.PC = mem_.ReadWord(operand);
+		}
+	}
+	void Core::JSR() {
+		uint16_t operand = mem_.ReadWord(reg_.PC);
+		reg_.PC++;
+		mem_.WriteWord(reg_.S + StackOffset, reg_.PC);
+		reg_.S -= 2;
+		reg_.PC = operand;
+	}
+	void Core::BPL() {
+		BranchIfClear(reg_.Negative());
+	}
+	void Core::BMI() {
+		BranchIfClear(~reg_.Negative());
+	}
+	void Core::BVC() {
+		BranchIfClear(reg_.Overflow());
+	}
+	void Core::BVS() {
+		BranchIfClear(~reg_.Overflow());
+	}
+	void Core::BCC() {
+		BranchIfClear(reg_.Carry());
+	}
+	void Core::BCS() {
+		BranchIfClear(~reg_.Carry());
+	}
+	void Core::BNE() {
+		BranchIfClear(reg_.Zero());
+	}
+	void Core::BEQ() {
+		BranchIfClear(~reg_.Zero());
+	}
+	void Core::BRK() {
 		// TODO
 	}
-	void Core::STA(uint8_t value) {
-		mem_.Write(value, reg_.A);
+	void Core::RTI() {
+		reg_.S += 3;
+		reg_.PC = mem_.ReadWord(reg_.S + StackOffset);
+		reg_.P = mem_.Read(reg_.S + StackOffset - 2);
 	}
-	void Core::LDA(uint8_t value) {
-		reg_.A = mem_.Read(value);
+	void Core::RTS() {
+		reg_.S += 2;
+		reg_.PC = mem_.ReadWord(reg_.S + StackOffset);
+		reg_.PC++;
+	}
+	void Core::PHP() {
+		mem_.Write(reg_.S + StackOffset, reg_.P);
+		reg_.S--;
+		reg_.SetInterrupt(1);
+	}
+	void Core::PLP() {
+		reg_.S++;
+		reg_.P = mem_.Read(reg_.S + StackOffset);
+	}
+	void Core::PHA() {
+		mem_.Write(reg_.S + StackOffset, reg_.A);
+		reg_.S--;
+	}
+	void Core::PLA() {
+		reg_.S++;
+		reg_.A = mem_.Read(reg_.S + StackOffset);
+		SetIfZeroAndNegative(reg_.A, reg_);
+	}
+	void Core::DEY() {
+		reg_.Y--;
+		SetIfZeroAndNegative(reg_.Y, reg_);
+	}
+	void Core::TAY() {
+		reg_.Y = reg_.A;
+		SetIfZeroAndNegative(reg_.Y, reg_);
+	}
+	void Core::INY() {
+		reg_.Y++;
+		SetIfZeroAndNegative(reg_.Y, reg_);
+	}
+	void Core::INX() {
+		reg_.X++;
+		SetIfZeroAndNegative(reg_.X, reg_);
+	}
+	void Core::CLC() {
+		reg_.SetCarry(0U);
+	}
+	void Core::SEC() {
+		reg_.SetCarry(1U);
+	}
+	void Core::CLI() {
+		reg_.SetInterrupt(0U);
+	}
+	void Core::SEI() {
+		reg_.SetInterrupt(1U);
+	}
+	void Core::TYA() {
+		reg_.A = reg_.Y;
+		SetIfZeroAndNegative(reg_.A, reg_);
+	}
+	void Core::CLV() {
+		reg_.SetOverflow(0U);
+	}
+	void Core::CLD() {
+		// TODO
+	}
+	void Core::SED() {
+		// TODO
+	}
+	void Core::TXA() {
+		reg_.A = reg_.X;
+		SetIfZeroAndNegative(reg_.A, reg_);
+	}
+	void Core::TXS() {
+		reg_.S = reg_.X;
+	}
+	void Core::TAX() {
+		reg_.X = reg_.A;
+		SetIfZeroAndNegative(reg_.X, reg_);
+	}
+	void Core::TSX() {
+		reg_.X = reg_.S;
+	}
+	void Core::DEX() {
+		reg_.X--;
+		SetIfZeroAndNegative(reg_.X, reg_);
+	}
+	void Core::NOP() {
+		// No operation
+	}
+	void Core::Compare(uint8_t a, uint8_t b) {
+		reg_.SetCarry(a >= b);
+		reg_.SetZero(a == b);
+		reg_.SetIfNegative(a - b);
+	}
+	uint8_t Core::Relative(uint8_t address) {
+		// Returns the relative address for a signed number
+		return (address & 0x80) ? ~(uint8_t)(0x100U - address) + 1U  : address;
+	}
+	void Core::BranchIfClear(uint8_t value) {
+		// Inverting the bits will check if set
+		uint8_t offset = Relative(mem_.Read(reg_.PC));
+		reg_.PC += (value & 0x01) ? offset : 0U;
+		reg_.PC++;
 	}
 
-	uint8_t Core::ZeroPageX() {
-		uint8_t retval = mem_.Read(mem_.Read(reg_.PC) + reg_.X);
+	const Instruction Core::ZeroPageX(Instruction& ins) {
+		ins.address = mem_.Read(reg_.PC) + reg_.X;
+		ins.value = mem_.Read(ins.address);
 		reg_.PC++;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::ZeroPageY() {
-		uint8_t retval = mem_.Read(mem_.Read(reg_.PC) + reg_.Y);
+	const Instruction Core::ZeroPageY(Instruction& ins) {
+		ins.address = mem_.Read(reg_.PC) + reg_.Y;
+		ins.value = mem_.Read(ins.address);
 		reg_.PC++;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::ZeroPage() {
-		uint8_t retval = mem_.Read(mem_.Read(reg_.PC));
+	const Instruction Core::ZeroPage(Instruction& ins) {
+		ins.address = mem_.Read(reg_.PC);
+		ins.value = mem_.Read(ins.address);
 		reg_.PC++;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::Immediate() {
-		uint8_t retval = mem_.Read(reg_.PC);
+	const Instruction Core::Immediate(Instruction& ins) {
+		ins.address = reg_.PC;
+		ins.value = mem_.Read(ins.address);
 		reg_.PC++;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::Absolute() {
-		uint8_t retval = mem_.Read(mem_.ReadWord(reg_.PC));
+	const Instruction Core::Absolute(Instruction& ins) {
+		ins.address = mem_.ReadWord(reg_.PC);
+		ins.value = mem_.Read(ins.address);
 		reg_.PC += 2;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::IndirectY() {
-		uint8_t retval = mem_.Read(mem_.ReadWord(mem_.Read(reg_.PC) + reg_.Y));
+	const Instruction Core::IndirectY(Instruction& ins) {
+		ins.address = mem_.ReadWord(mem_.Read(reg_.PC) + reg_.Y);
+		ins.value = mem_.Read(ins.address);
 		reg_.PC++;
+		return ins;
 	}
-	uint8_t Core::IndirectX() {
-		uint8_t retval = mem_.Read(mem_.ReadWord((mem_.Read(reg_.PC) + reg_.X) % 0x100));
+	const Instruction Core::IndirectX(Instruction& ins) {
+		ins.address = mem_.ReadWord((mem_.Read(reg_.PC) + reg_.X) % 0x100);
+		ins.value = mem_.Read(ins.address);
 		reg_.PC++;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::AbsoluteX() {
-		uint8_t retval = mem_.Read(mem_.ReadWord(reg_.PC) + reg_.X);
+	const Instruction Core::AbsoluteX(Instruction& ins) {
+		ins.address = mem_.ReadWord(reg_.PC) + reg_.X;
+		ins.value = mem_.Read(ins.address);
 		reg_.PC += 2;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::AbsoluteY() {
-		uint8_t retval = mem_.Read(mem_.ReadWord(reg_.PC) + reg_.Y);
+	const Instruction Core::AbsoluteY(Instruction& ins) {
+		ins.address = mem_.ReadWord(reg_.PC) + reg_.Y;
+		ins.value = mem_.Read(ins.address);
 		reg_.PC += 2;
-		return retval;
+		return ins;
 	}
-	uint8_t Core::Accumulator() {
-		return reg_.A;
+	const Instruction Core::Accumulator(Instruction& ins) {
+		ins.isAccumulator = true;
+		return ins;
 	}
 }

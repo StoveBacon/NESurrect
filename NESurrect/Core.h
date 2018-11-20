@@ -3,6 +3,12 @@
 #include "CPUMemory.h"
 
 namespace CPU {
+	struct Instruction {
+		Instruction() : value(0), address(0), isAccumulator(false) {}
+		uint8_t value;
+		uint16_t address;
+		bool isAccumulator;
+	};
 	class Core {
 	public:
 		void ExecuteInstruction();
@@ -11,44 +17,44 @@ namespace CPU {
 		CPUMemory mem_;
 
 		// Addressing modes
-		uint8_t ZeroPageX();
-		uint8_t ZeroPageY();
-		uint8_t ZeroPage();
-		uint8_t Immediate();
-		uint8_t Absolute();
-		uint8_t IndirectY();
-		uint8_t IndirectX();
-		uint8_t AbsoluteX();
-		uint8_t AbsoluteY();
-		uint8_t Accumulator();
+		const Instruction ZeroPageX(Instruction& ins);
+		const Instruction ZeroPageY(Instruction& ins);
+		const Instruction ZeroPage(Instruction& ins);
+		const Instruction Immediate(Instruction& ins);
+		const Instruction Absolute(Instruction& ins);
+		const Instruction IndirectY(Instruction& ins);
+		const Instruction IndirectX(Instruction& ins);
+		const Instruction AbsoluteX(Instruction& ins);
+		const Instruction AbsoluteY(Instruction& ins);
+		const Instruction Accumulator(Instruction& ins);
 
 		// Addressing operations
-		void ORA(uint8_t value);
-		void AND(uint8_t value);
-		void EOR(uint8_t value);
-		void ADC(uint8_t value);
-		void STA(uint8_t value);
-		void LDA(uint8_t value);
-		void CMP(uint8_t value);
-		void SBC(uint8_t value);
-		void ASL(uint8_t value);
-		void ROL(uint8_t value);
-		void LSR(uint8_t value);
-		void ROR(uint8_t value);
-		void STX(uint8_t value);
-		void LDX(uint8_t value);
-		void DEC(uint8_t value);
-		void INC(uint8_t value);
-		void BIT(uint8_t value);
-		void JMP(uint8_t value);
-		void STY(uint8_t value);
-		void LDY(uint8_t value);
-		void CPY(uint8_t value);
-		void CPX(uint8_t value);
+		void ORA(const Instruction& ins);
+		void AND(const Instruction& ins);
+		void EOR(const Instruction& ins);
+		void ADC(const Instruction& ins);
+		void STA(const Instruction& ins);
+		void LDA(const Instruction& ins);
+		void CMP(const Instruction& ins);
+		void SBC(const Instruction& ins);
+		void ASL(const Instruction& ins);
+		void ROL(const Instruction& ins);
+		void LSR(const Instruction& ins);
+		void ROR(const Instruction& ins);
+		void STX(const Instruction& ins);
+		void LDX(const Instruction& ins);
+		void DEC(const Instruction& ins);
+		void INC(const Instruction& ins);
+		void BIT(const Instruction& ins);
+		void JMP(const Instruction& ins);
+		void STY(const Instruction& ins);
+		void LDY(const Instruction& ins);
+		void CPY(const Instruction& ins);
+		void CPX(const Instruction& ins);
 
 		// Single byte operations
-		void JMPAbs();
-		void JSRAbs();
+		void JMP();
+		void JSR();
 		void BPL();
 		void BMI();
 		void BVC();
@@ -82,5 +88,9 @@ namespace CPU {
 		void TSX();
 		void DEX();
 		void NOP();
+
+		void Compare(uint8_t a, uint8_t b);
+		uint8_t Relative(uint8_t address);
+		void BranchIfClear(uint8_t value);
 	};
 }

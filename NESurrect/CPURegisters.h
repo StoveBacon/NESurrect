@@ -2,10 +2,19 @@
 #include <cstdint>
 
 namespace CPU {
+	static constexpr uint16_t StackOffset = 0x100;
 	class CPURegisters {
 	public:
-		void SetIfZero(const uint8_t& value);
-		void SetIfNegative(const uint8_t& value);
+		void SetIfZero(uint8_t value);
+		void SetIfNegative(uint8_t value);
+		void SetZero(uint8_t value);
+		void SetCarry(uint8_t value);
+		void SetOverflow(uint8_t value);
+		void SetInterrupt(uint8_t value);
+		uint8_t Carry();
+		uint8_t Negative();
+		uint8_t Overflow();
+		uint8_t Zero();
 
 		uint8_t A;
 		uint8_t X;
@@ -13,6 +22,7 @@ namespace CPU {
 		uint16_t PC;
 		uint8_t S;
 		uint8_t P;
+
 	private:
 		static constexpr uint8_t CarryMask = 0b0000;
 		static constexpr uint8_t ZeroMask = 0b0010;

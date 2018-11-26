@@ -1,6 +1,6 @@
 #include "CPURegisters.h"
 
-namespace CPU {
+namespace cpu {
 	void CPURegisters::SetBit(uint8_t mask, uint8_t value) {
 		if (value == 0) {
 			P = P & ~mask;

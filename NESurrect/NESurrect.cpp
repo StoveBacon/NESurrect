@@ -1,10 +1,8 @@
-#include "Core.h"
+#include "NES.h"
 
 int main() {
-	CPU::Core core;
-	for (;;) {
-		core.ExecuteInstruction();
-	}
+	NES nes;
+	nes.Run();
 	
 	return 0;
 }

@@ -2,7 +2,7 @@
 #include "CPURegisters.h"
 #include "CPUMemory.h"
 
-namespace CPU {
+namespace cpu {
 	struct Instruction {
 		Instruction() : value(0), address(0), isAccumulator(false) {}
 		uint8_t opcode;
@@ -13,14 +13,14 @@ namespace CPU {
 
 	class Core {
 	public:
-		Core();
+		Core(memory::CPUMemory *mem);
 		void Reset();
 		void ExecuteInstruction();
 
 		
 	private:
 		CPURegisters reg_;
-		CPUMemory mem_;
+		memory::CPUMemory *mem_;
 
 		// Addressing modes
 		const Instruction ZeroPageX(Instruction& ins);

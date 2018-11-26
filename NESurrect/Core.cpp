@@ -1,20 +1,21 @@
 #include "Core.h"
 
-namespace CPU {
-	Core::Core() {
+namespace cpu {
+	Core::Core(memory::CPUMemory* mem) {
+		mem_ = mem;
 		Reset();
 	}
 	void Core::Reset() {
 		constexpr uint16_t ResetVector = 0xFFFC;
 		constexpr uint8_t StatusDefault = 0x24;
 		constexpr uint8_t SPDefault = 0xFD;
-		reg_.PC = mem_.ReadWord(ResetVector);
+		reg_.PC = mem_->ReadWord(ResetVector);
 		reg_.P = StatusDefault;
 		reg_.S = SPDefault;
 	}
 	void Core::ExecuteInstruction() {
 		Instruction ins;
-		ins.opcode = mem_.Read(reg_.PC);
+		ins.opcode = mem_->Read(reg_.PC);
 		reg_.PC++;
 		switch (ins.opcode) {
 		case 0x01: ORA(IndirectX(ins)); break;
@@ -223,7 +224,7 @@ namespace CPU {
 		reg_.A = result;
 	}
 	void Core::STA(const Instruction& ins) {
-		mem_.Write(ins.address, reg_.A);
+		mem_->Write(ins.address, reg_.A);
 	}
 	void Core::LDA(const Instruction& ins) {
 		reg_.A = ins.value;
@@ -245,7 +246,7 @@ namespace CPU {
 		} else {
 			uint8_t shifted = ins.value << 1;
 			reg_.SetCarry(ins.value & 0x80);
-			mem_.Write(ins.address, shifted);
+			mem_->Write(ins.address, shifted);
 			SetIfZeroAndNegative(shifted, reg_);
 		}
 	}
@@ -258,7 +259,7 @@ namespace CPU {
 		} else {
 			uint8_t shifted = (ins.value << 1) | reg_.Carry();
 			reg_.SetCarry(ins.value & 0x80);
-			mem_.Write(ins.address, shifted);
+			mem_->Write(ins.address, shifted);
 			SetIfZeroAndNegative(shifted, reg_);
 		}
 	}
@@ -270,7 +271,7 @@ namespace CPU {
 		} else {
 			uint8_t shifted = ins.value >> 1;
 			reg_.SetCarry(ins.value & 0x01);
-			mem_.Write(ins.address, shifted);
+			mem_->Write(ins.address, shifted);
 			SetIfZeroAndNegative(shifted, reg_);
 		}
 	}
@@ -283,23 +284,23 @@ namespace CPU {
 		} else {
 			uint8_t shifted = (ins.value >> 1) | (reg_.Carry() << 7);
 			reg_.SetCarry(ins.value & 0x01);
-			mem_.Write(ins.address, shifted);
+			mem_->Write(ins.address, shifted);
 			SetIfZeroAndNegative(shifted, reg_);
 		}
 	}
 	void Core::STX(const Instruction& ins) {
-		mem_.Write(ins.address, reg_.X);
+		mem_->Write(ins.address, reg_.X);
 	}
 	void Core::LDX(const Instruction& ins) {
 		reg_.X = ins.value;
 		SetIfZeroAndNegative(reg_.X, reg_);
 	}
 	void Core::DEC(const Instruction& ins) {
-		mem_.Write(ins.address, ins.value - 1);
+		mem_->Write(ins.address, ins.value - 1);
 		SetIfZeroAndNegative(ins.value - 1, reg_);
 	}
 	void Core::INC(const Instruction& ins) {
-		mem_.Write(ins.address, ins.value + 1);
+		mem_->Write(ins.address, ins.value + 1);
 		SetIfZeroAndNegative(ins.value + 1, reg_);
 	}
 	void Core::BIT(const Instruction& ins) {
@@ -311,7 +312,7 @@ namespace CPU {
 		reg_.PC = ins.address;
 	}
 	void Core::STY(const Instruction& ins) {
-		mem_.Write(ins.address, reg_.Y);
+		mem_->Write(ins.address, reg_.Y);
 	}
 	void Core::LDY(const Instruction& ins) {
 		reg_.Y = ins.value;
@@ -324,19 +325,19 @@ namespace CPU {
 		Compare(reg_.X, ins.value);
 	}
 	void Core::JMP() {
-		uint16_t operand = mem_.ReadWord(reg_.PC);
+		uint16_t operand = mem_->ReadWord(reg_.PC);
 		// Simulate a hardware bug where crossing a page wraps instead of going through
 		if ((operand & 0xFF) == 0xFF) {
-			reg_.PC = mem_.Read(operand);
-			reg_.PC += mem_.Read(operand & 0xFF00) << 8;
+			reg_.PC = mem_->Read(operand);
+			reg_.PC += mem_->Read(operand & 0xFF00) << 8;
 		} else {
-			reg_.PC = mem_.ReadWord(operand);
+			reg_.PC = mem_->ReadWord(operand);
 		}
 	}
 	void Core::JSR() {
-		uint16_t operand = mem_.ReadWord(reg_.PC);
+		uint16_t operand = mem_->ReadWord(reg_.PC);
 		reg_.PC++;
-		mem_.WriteWord(reg_.S + StackOffset - 1, reg_.PC);
+		mem_->WriteWord(reg_.S + StackOffset - 1, reg_.PC);
 		reg_.S -= 2;
 		reg_.PC = operand;
 	}
@@ -369,30 +370,30 @@ namespace CPU {
 	}
 	void Core::RTI() {
 		reg_.S += 3;
-		reg_.PC = mem_.ReadWord(reg_.S + StackOffset - 1);
-		reg_.P = mem_.Read(reg_.S + StackOffset - 2);
+		reg_.PC = mem_->ReadWord(reg_.S + StackOffset - 1);
+		reg_.P = mem_->Read(reg_.S + StackOffset - 2);
 	}
 	void Core::RTS() {
 		reg_.S += 2;
-		reg_.PC = mem_.ReadWord(reg_.S + StackOffset - 1);
+		reg_.PC = mem_->ReadWord(reg_.S + StackOffset - 1);
 		reg_.PC++;
 	}
 	void Core::PHP() {
-		mem_.Write(reg_.S + StackOffset, reg_.P);
+		mem_->Write(reg_.S + StackOffset, reg_.P);
 		reg_.S--;
 		reg_.SetInterrupt(1);
 	}
 	void Core::PLP() {
 		reg_.S++;
-		reg_.P = mem_.Read(reg_.S + StackOffset);
+		reg_.P = mem_->Read(reg_.S + StackOffset);
 	}
 	void Core::PHA() {
-		mem_.Write(reg_.S + StackOffset, reg_.A);
+		mem_->Write(reg_.S + StackOffset, reg_.A);
 		reg_.S--;
 	}
 	void Core::PLA() {
 		reg_.S++;
-		reg_.A = mem_.Read(reg_.S + StackOffset);
+		reg_.A = mem_->Read(reg_.S + StackOffset);
 		SetIfZeroAndNegative(reg_.A, reg_);
 	}
 	void Core::DEY() {
@@ -470,69 +471,68 @@ namespace CPU {
 		return (address & 0x80) ? ~(uint8_t)(0x100U - address) + 1U  : address;
 	}
 	void Core::BranchIfClear(uint8_t value) {
-		// Inverting the bits will check if set
-		uint8_t offset = Relative(mem_.Read(reg_.PC));
+		uint8_t offset = Relative(mem_->Read(reg_.PC));
 		reg_.PC += value == 0 ? offset : 0U;
 		reg_.PC++;
 	}
 	void Core::BranchIfSet(uint8_t value) {
-		uint8_t offset = Relative(mem_.Read(reg_.PC));
+		uint8_t offset = Relative(mem_->Read(reg_.PC));
 		reg_.PC += value == 1 ? offset : 0U;
 		reg_.PC++;
 	}
 
 	// **Addressing modes**
 	const Instruction Core::ZeroPageX(Instruction& ins) {
-		ins.address = mem_.Read(reg_.PC) + reg_.X;
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->Read(reg_.PC) + reg_.X;
+		ins.value = mem_->Read(ins.address);
 		reg_.PC++;
 		return ins;
 	}
 	const Instruction Core::ZeroPageY(Instruction& ins) {
-		ins.address = mem_.Read(reg_.PC) + reg_.Y;
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->Read(reg_.PC) + reg_.Y;
+		ins.value = mem_->Read(ins.address);
 		reg_.PC++;
 		return ins;
 	}
 	const Instruction Core::ZeroPage(Instruction& ins) {
-		ins.address = mem_.Read(reg_.PC);
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->Read(reg_.PC);
+		ins.value = mem_->Read(ins.address);
 		reg_.PC++;
 		return ins;
 	}
 	const Instruction Core::Immediate(Instruction& ins) {
 		ins.address = reg_.PC;
-		ins.value = mem_.Read(ins.address);
+		ins.value = mem_->Read(ins.address);
 		reg_.PC++;
 		return ins;
 	}
 	const Instruction Core::Absolute(Instruction& ins) {
-		ins.address = mem_.ReadWord(reg_.PC);
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->ReadWord(reg_.PC);
+		ins.value = mem_->Read(ins.address);
 		reg_.PC += 2;
 		return ins;
 	}
 	const Instruction Core::IndirectY(Instruction& ins) {
-		ins.address = mem_.ReadWord(mem_.Read(reg_.PC) + reg_.Y);
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->ReadWord(mem_->Read(reg_.PC) + reg_.Y);
+		ins.value = mem_->Read(ins.address);
 		reg_.PC++;
 		return ins;
 	}
 	const Instruction Core::IndirectX(Instruction& ins) {
-		ins.address = mem_.ReadWord((mem_.Read(reg_.PC) + reg_.X) % 0x100);
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->ReadWord((mem_->Read(reg_.PC) + reg_.X) % 0x100);
+		ins.value = mem_->Read(ins.address);
 		reg_.PC++;
 		return ins;
 	}
 	const Instruction Core::AbsoluteX(Instruction& ins) {
-		ins.address = mem_.ReadWord(reg_.PC) + reg_.X;
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->ReadWord(reg_.PC) + reg_.X;
+		ins.value = mem_->Read(ins.address);
 		reg_.PC += 2;
 		return ins;
 	}
 	const Instruction Core::AbsoluteY(Instruction& ins) {
-		ins.address = mem_.ReadWord(reg_.PC) + reg_.Y;
-		ins.value = mem_.Read(ins.address);
+		ins.address = mem_->ReadWord(reg_.PC) + reg_.Y;
+		ins.value = mem_->Read(ins.address);
 		reg_.PC += 2;
 		return ins;
 	}

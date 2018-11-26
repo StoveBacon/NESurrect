@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <bitset>
 
-namespace CPU {
+namespace cpu {
 	static constexpr uint16_t StackOffset = 0x100;
 	class CPURegisters {
 	public:

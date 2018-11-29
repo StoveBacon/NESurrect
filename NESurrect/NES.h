@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "CPUMemory.h"
+#include "SFMLWrapper.h"
 #include "MemoryMapper.h"
 
 class NES {
@@ -10,6 +11,4 @@ public:
 private:
 	cpu::Core core;
 	memory::CPUMemory CPUMem_;
-	// Memory PPUMem_;
-	// Memory
 };

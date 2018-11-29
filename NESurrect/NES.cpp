@@ -1,8 +1,10 @@
 #include "NES.h"
 
 void NES::Run() {
-	memory::MemoryMapper mapper;
-	for (;;) {
+	wrapper::SFMLWrapper wrapper;
+	wrapper.Initialize();
+
+	while (wrapper.windowObject.IsOpen()) {
 		core.ExecuteInstruction();
 	}
 }

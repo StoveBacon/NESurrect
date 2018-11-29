@@ -1,6 +1,5 @@
 #pragma once
 #include "Memory.h"
-#include <queue>
 
 namespace memory {
 	constexpr int MemSize = 0x10000U;

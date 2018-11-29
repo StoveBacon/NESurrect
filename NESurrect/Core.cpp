@@ -17,6 +17,10 @@ namespace cpu {
 		Instruction ins;
 		ins.opcode = mem_->Read(reg_.PC);
 		reg_.PC++;
+
+		// Read the opcode. If it is an addressed mode,  pass the correct addressing function to the instruction,
+		// which contains data about the memory operation.
+		// Otherwise, it's a single byte instruction that just executes straight away.
 		switch (ins.opcode) {
 		case 0x01: ORA(IndirectX(ins)); break;
 		case 0x05: ORA(ZeroPage(ins)); break;

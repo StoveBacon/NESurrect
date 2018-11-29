@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "WindowInterface.h"
 
 namespace wrapper {
 	// Forward declaration so that this system doesn't have to know about the implementation of the picture processor
@@ -8,9 +9,11 @@ namespace wrapper {
 	// Provides an interface for rendering so that rendering systems can be swapped without affecting non-rendering code
 	class GraphicsInterface {
 	public:
+		GraphicsInterface(WindowInterface *parent) : parentWindow_(parent) {}
 		virtual ~GraphicsInterface() = default;
 		virtual void DrawPixels(const std::vector<Pixel>&) = 0;
 	protected:
 		virtual void DrawToHardware(const std::vector<Pixel>&) = 0;
+		WindowInterface *parentWindow_;
 	};
 }

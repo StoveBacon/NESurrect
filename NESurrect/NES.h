@@ -1,14 +1,16 @@
 #pragma once
 #include "Core.h"
 #include "CPUMemory.h"
-#include "SFMLWrapper.h"
+#include "WrapperTypes.h"
 #include "MemoryMapper.h"
 
 class NES {
 public:
-	NES() : core(&CPUMem_) {}
+	NES();
+	~NES();
 	void Run();
 private:
-	cpu::Core core;
-	memory::CPUMemory CPUMem_;
+	cpu::Core *core_;
+	memory::CPUMemory *cpuMem_;
+	wrapper::Wrapper *wrapper_;
 };

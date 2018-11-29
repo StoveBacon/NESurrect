@@ -1,10 +1,19 @@
 #include "NES.h"
 
-void NES::Run() {
-	wrapper::SFMLWrapper wrapper;
-	wrapper.Initialize();
+NES::NES() {
+	cpuMem_ = new memory::CPUMemory();
+	core_ = new cpu::Core(cpuMem_);
+	wrapper_ = new wrapper::SFMLWrapper();
+}
 
-	while (wrapper.windowObject.IsOpen()) {
-		core.ExecuteInstruction();
+NES::~NES() {
+	delete wrapper_;
+	delete core_;
+	delete cpuMem_;
+}
+
+void NES::Run() {
+	while (wrapper_->windowObject->IsOpen()) {
+		core_->ExecuteInstruction();
 	}
 }

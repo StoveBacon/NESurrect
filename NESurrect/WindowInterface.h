@@ -4,7 +4,7 @@
 namespace wrapper {
 	class WindowInterface {
 	public:
-		~WindowInterface() = default;
+		virtual ~WindowInterface() = default;
 		virtual void ProcessEventQueue() = 0;
 		bool IsOpen() { return isOpen_; }
 	protected:

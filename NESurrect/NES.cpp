@@ -15,5 +15,6 @@ NES::~NES() {
 void NES::Run() {
 	while (wrapper_->windowObject->IsOpen()) {
 		core_->ExecuteInstruction();
+		wrapper_->windowObject->ProcessEventQueue();
 	}
 }

@@ -1,19 +1,22 @@
 #pragma once
 #include <cstdint>
-#include <map>
+#include <queue>
 
 namespace memory {
-	typedef std::map<const uint16_t, uint8_t*> MemoryMap;
+	struct Message {
+	public:
+		Message(uint16_t addr, uint8_t val) : address(addr), value(val) {}
+	private:
+		const uint16_t address;
+		const uint8_t value;
+	};
 
 	class MemoryMapper {
 	public:
-		void AddMap(const uint16_t senderAddress, uint8_t *reciever) {
-			maps[senderAddress] = reciever;
-		}
-		void Map(const uint16_t address, const uint8_t value) {
-			*maps[address] = value;
-		}
-	private:
-		MemoryMap maps;
+		~MemoryMapper();
+		std::queue<const Message*> PPUMemoryQueue;
+		void LogCPUMemoryAccess(const uint16_t address, const uint8_t value);
+		const Message const *NextPPUMessage();
+		void PopPPUQueue();
 	};
 }

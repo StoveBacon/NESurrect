@@ -12,13 +12,13 @@ namespace memory {
 	class Memory {
 	public:
 		virtual uint8_t Read(const uint16_t address) {
-			uint16_t offsetAddress = MapAddress(address, ranges...);
+			offsetAddress = MapAddress(address, ranges...);
 			return data_[offsetAddress];
 		}
 
 		// For ReadWord and WriteWord, the 6502 is little-endian, so bytes have to be read/written backwards
 		uint16_t ReadWord(const uint16_t address) {
-			const uint16_t offsetAddress = MapAddress(address, ranges...);
+			offsetAddress = MapAddress(address, ranges...);
 			uint16_t retval = Read(offsetAddress + 1);
 			retval = retval << 8;
 			// retval = retval | ((offsetAddress == ZeroPageBoundary) ? Read(0x00) : Read(offsetAddress)); TODO Implement hardware bug here
@@ -27,14 +27,18 @@ namespace memory {
 		}
 
 		virtual void Write(const uint16_t address, const uint8_t data) {
-			uint16_t offsetAddress = MapAddress(address, ranges...);
+			offsetAddress = MapAddress(address, ranges...);
 			data_[offsetAddress] = data;
 		}
 		void WriteWord(const uint16_t address, const uint16_t data) {
-			uint16_t offsetAddress = MapAddress(address, ranges...);
+			offsetAddress = MapAddress(address, ranges...);
 			data_[offsetAddress + 1] = (data & 0xFF00) >> 8;
 			data_[offsetAddress] = (data & 0x00FF);
 		}
+
+	protected:
+		uint8_t data_[size] = { 0 };
+		uint16_t offsetAddress;
 
 	private:
 		template <typename... Rest>
@@ -50,6 +54,5 @@ namespace memory {
 			return address;
 		}
 		uint8_t ZeroPageBoundary = 0xFF;
-		uint8_t data_[size] = { 0 };
 	};
 }

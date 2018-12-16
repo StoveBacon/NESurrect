@@ -1,6 +1,5 @@
 #pragma once
 #include "Core.h"
-#include "CPUMemory.h"
 #include "WrapperTypes.h"
 
 class NES {

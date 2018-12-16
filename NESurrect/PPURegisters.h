@@ -1,11 +1,13 @@
 #pragma once
 #include <cstdint>
+#include <map>
 
 
-namespace PPU {
+namespace ppu {
 	// For information on what each of these is, visit:
 	// http://wiki.nesdev.com/w/index.php/PPU_registers
-	// Define each register and each offset into it
+
+	// Define each register address and each offset into it
 	constexpr uint16_t PPUCtrl = 0x2000;
 	constexpr uint8_t NMIEnable = 0x80;
 	constexpr uint8_t PPUMaster = 0x40;
@@ -34,13 +36,5 @@ namespace PPU {
 	constexpr uint16_t PPUScroll = 0x2005;
 	constexpr uint16_t PPUAddress = 0x2006;
 	constexpr uint16_t PPUData = 0x2007;
-	constexpr uint16_t OAMDATA = 0x4014;
-
-
-	class PPURegisters {
-	public:
-
-	private:
-	
-	};
+	constexpr uint16_t OAMDump = 0x4014;
 }

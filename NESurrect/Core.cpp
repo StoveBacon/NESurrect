@@ -1,22 +1,22 @@
 #include "Core.h"
 
 namespace cpu {
-	Core::Core(memory::CPUMemory* mem) {
-		mem_ = mem;
+	Core::Core(mem::Memory* mem) {
+		mem = mem;
 		Reset();
 	}
 	void Core::Reset() {
 		constexpr uint16_t ResetVector = 0xFFFC;
 		constexpr uint8_t StatusDefault = 0x24;
 		constexpr uint8_t SPDefault = 0xFD;
-		reg_.PC = mem_->ReadWord(ResetVector);
-		reg_.P = StatusDefault;
-		reg_.S = SPDefault;
+		reg.PC = mem->ReadWordCPU(ResetVector);
+		reg.P = StatusDefault;
+		reg.S = SPDefault;
 	}
 	void Core::ExecuteInstruction() {
 		Instruction ins;
-		ins.opcode = mem_->Read(reg_.PC);
-		reg_.PC++;
+		ins.opcode = mem->ReadByteCPU(reg.PC);
+		reg.PC++;
 
 		// Read the opcode. If it is an addressed mode,  pass the correct addressing function to the instruction,
 		// which contains data about the memory operation.
@@ -209,33 +209,33 @@ namespace cpu {
 	}
 
 	void Core::ORA(const Instruction& ins) {
-		reg_.A = reg_.A | ins.value;
-		SetIfZeroAndNegative(reg_.A, reg_);
+		reg.A = reg.A | ins.value;
+		SetIfZeroAndNegative(reg.A, reg);
 	}
 	void Core::AND(const Instruction& ins) {
-		reg_.A = reg_.A & ins.value;
-		SetIfZeroAndNegative(reg_.A, reg_);
+		reg.A = reg.A & ins.value;
+		SetIfZeroAndNegative(reg.A, reg);
 	}
 	void Core::EOR(const Instruction& ins) {
-		reg_.A = reg_.A ^ ins.value;
-		SetIfZeroAndNegative(reg_.A, reg_);
+		reg.A = reg.A ^ ins.value;
+		SetIfZeroAndNegative(reg.A, reg);
 	}
 	void Core::ADC(const Instruction& ins) {
-		uint8_t result = reg_.A + ins.value + reg_.Carry();
-		SetIfZeroAndNegative(result, reg_);
-		reg_.SetOverflow(((ins.value & 0x80) == (reg_.A & 0x80)) && ((result & 0x80) != (reg_.A & 0x80)));
-		reg_.SetCarry(result < reg_.A);
-		reg_.A = result;
+		uint8_t result = reg.A + ins.value + reg.Carry();
+		SetIfZeroAndNegative(result, reg);
+		reg.SetOverflow(((ins.value & 0x80) == (reg.A & 0x80)) && ((result & 0x80) != (reg.A & 0x80)));
+		reg.SetCarry(result < reg.A);
+		reg.A = result;
 	}
 	void Core::STA(const Instruction& ins) {
-		mem_->Write(ins.address, reg_.A);
+		mem->WriteByteCPU(ins.address, reg.A);
 	}
 	void Core::LDA(const Instruction& ins) {
-		reg_.A = ins.value;
-		SetIfZeroAndNegative(reg_.A, reg_);
+		reg.A = ins.value;
+		SetIfZeroAndNegative(reg.A, reg);
 	}
 	void Core::CMP(const Instruction& ins) {
-		Compare(reg_.A, ins.value);
+		Compare(reg.A, ins.value);
 	}
 	void Core::SBC(const Instruction& ins) {
 		Instruction temp = ins;
@@ -244,221 +244,221 @@ namespace cpu {
 	}
 	void Core::ASL(const Instruction& ins) {
 		if (ins.isAccumulator) {
-			reg_.SetCarry(reg_.A & 0x80);
-			reg_.A = reg_.A << 1;
-			SetIfZeroAndNegative(reg_.A, reg_);
+			reg.SetCarry(reg.A & 0x80);
+			reg.A = reg.A << 1;
+			SetIfZeroAndNegative(reg.A, reg);
 		} else {
 			uint8_t shifted = ins.value << 1;
-			reg_.SetCarry(ins.value & 0x80);
-			mem_->Write(ins.address, shifted);
-			SetIfZeroAndNegative(shifted, reg_);
+			reg.SetCarry(ins.value & 0x80);
+			mem->WriteByteCPU(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg);
 		}
 	}
 	void Core::ROL(const Instruction& ins) {
 		if (ins.isAccumulator) {
-			uint8_t shifted = (reg_.A << 1) | reg_.Carry();
-			reg_.SetCarry(reg_.A & 0x80);
-			reg_.A = shifted;
-			SetIfZeroAndNegative(shifted, reg_);
+			uint8_t shifted = (reg.A << 1) | reg.Carry();
+			reg.SetCarry(reg.A & 0x80);
+			reg.A = shifted;
+			SetIfZeroAndNegative(shifted, reg);
 		} else {
-			uint8_t shifted = (ins.value << 1) | reg_.Carry();
-			reg_.SetCarry(ins.value & 0x80);
-			mem_->Write(ins.address, shifted);
-			SetIfZeroAndNegative(shifted, reg_);
+			uint8_t shifted = (ins.value << 1) | reg.Carry();
+			reg.SetCarry(ins.value & 0x80);
+			mem->WriteByteCPU(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg);
 		}
 	}
 	void Core::LSR(const Instruction& ins) {
 		if (ins.isAccumulator) {
-			reg_.SetCarry(reg_.A & 0x01);
-			reg_.A = reg_.A >> 1;
-			SetIfZeroAndNegative(reg_.A, reg_);
+			reg.SetCarry(reg.A & 0x01);
+			reg.A = reg.A >> 1;
+			SetIfZeroAndNegative(reg.A, reg);
 		} else {
 			uint8_t shifted = ins.value >> 1;
-			reg_.SetCarry(ins.value & 0x01);
-			mem_->Write(ins.address, shifted);
-			SetIfZeroAndNegative(shifted, reg_);
+			reg.SetCarry(ins.value & 0x01);
+			mem->WriteByteCPU(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg);
 		}
 	}
 	void Core::ROR(const Instruction& ins) {
 		if (ins.isAccumulator) {
-			uint8_t shifted = (reg_.A >> 1) | (reg_.Carry() << 7);
-			reg_.SetCarry(reg_.A & 0x01);
-			reg_.A = shifted;
-			SetIfZeroAndNegative(reg_.A, reg_);
+			uint8_t shifted = (reg.A >> 1) | (reg.Carry() << 7);
+			reg.SetCarry(reg.A & 0x01);
+			reg.A = shifted;
+			SetIfZeroAndNegative(reg.A, reg);
 		} else {
-			uint8_t shifted = (ins.value >> 1) | (reg_.Carry() << 7);
-			reg_.SetCarry(ins.value & 0x01);
-			mem_->Write(ins.address, shifted);
-			SetIfZeroAndNegative(shifted, reg_);
+			uint8_t shifted = (ins.value >> 1) | (reg.Carry() << 7);
+			reg.SetCarry(ins.value & 0x01);
+			mem->WriteByteCPU(ins.address, shifted);
+			SetIfZeroAndNegative(shifted, reg);
 		}
 	}
 	void Core::STX(const Instruction& ins) {
-		mem_->Write(ins.address, reg_.X);
+		mem->WriteByteCPU(ins.address, reg.X);
 	}
 	void Core::LDX(const Instruction& ins) {
-		reg_.X = ins.value;
-		SetIfZeroAndNegative(reg_.X, reg_);
+		reg.X = ins.value;
+		SetIfZeroAndNegative(reg.X, reg);
 	}
 	void Core::DEC(const Instruction& ins) {
-		mem_->Write(ins.address, ins.value - 1);
-		SetIfZeroAndNegative(ins.value - 1, reg_);
+		mem->WriteByteCPU(ins.address, ins.value - 1);
+		SetIfZeroAndNegative(ins.value - 1, reg);
 	}
 	void Core::INC(const Instruction& ins) {
-		mem_->Write(ins.address, ins.value + 1);
-		SetIfZeroAndNegative(ins.value + 1, reg_);
+		mem->WriteByteCPU(ins.address, ins.value + 1);
+		SetIfZeroAndNegative(ins.value + 1, reg);
 	}
 	void Core::BIT(const Instruction& ins) {
-		reg_.SetIfZero(reg_.A & ins.value);
-		reg_.SetIfNegative(ins.value);
-		reg_.SetOverflow(ins.value & 0x40);
+		reg.SetIfZero(reg.A & ins.value);
+		reg.SetIfNegative(ins.value);
+		reg.SetOverflow(ins.value & 0x40);
 	}
 	void Core::JMP(const Instruction& ins) {
-		reg_.PC = ins.address;
+		reg.PC = ins.address;
 	}
 	void Core::STY(const Instruction& ins) {
-		mem_->Write(ins.address, reg_.Y);
+		mem->WriteByteCPU(ins.address, reg.Y);
 	}
 	void Core::LDY(const Instruction& ins) {
-		reg_.Y = ins.value;
-		SetIfZeroAndNegative(reg_.Y, reg_);
+		reg.Y = ins.value;
+		SetIfZeroAndNegative(reg.Y, reg);
 	}
 	void Core::CPY(const Instruction& ins) {
-		Compare(reg_.Y, ins.value);
+		Compare(reg.Y, ins.value);
 	}
 	void Core::CPX(const Instruction& ins) {
-		Compare(reg_.X, ins.value);
+		Compare(reg.X, ins.value);
 	}
 	void Core::JMP() {
-		uint16_t operand = mem_->ReadWord(reg_.PC);
+		uint16_t operand = mem->ReadWordCPU(reg.PC);
 		// Simulate a hardware bug where crossing a page wraps instead of going through
 		if ((operand & 0xFF) == 0xFF) {
-			reg_.PC = mem_->Read(operand);
-			reg_.PC += mem_->Read(operand & 0xFF00) << 8;
+			reg.PC = mem->ReadByteCPU(operand);
+			reg.PC += mem->ReadByteCPU(operand & 0xFF00) << 8;
 		} else {
-			reg_.PC = mem_->ReadWord(operand);
+			reg.PC = mem->ReadWordCPU(operand);
 		}
 	}
 	void Core::JSR() {
-		uint16_t operand = mem_->ReadWord(reg_.PC);
-		reg_.PC++;
-		mem_->WriteWord(reg_.S + StackOffset - 1, reg_.PC);
-		reg_.S -= 2;
-		reg_.PC = operand;
+		uint16_t operand = mem->ReadWordCPU(reg.PC);
+		reg.PC++;
+		mem->WriteWordCPU(reg.S + StackOffset - 1, reg.PC);
+		reg.S -= 2;
+		reg.PC = operand;
 	}
 	void Core::BPL() {
-		BranchIfClear(reg_.Negative());
+		BranchIfClear(reg.Negative());
 	}
 	void Core::BMI() {
-		BranchIfSet(reg_.Negative());
+		BranchIfSet(reg.Negative());
 	}
 	void Core::BVC() {
-		BranchIfClear(reg_.Overflow());
+		BranchIfClear(reg.Overflow());
 	}
 	void Core::BVS() {
-		BranchIfSet(reg_.Overflow());
+		BranchIfSet(reg.Overflow());
 	}
 	void Core::BCC() {
-		BranchIfClear(reg_.Carry());
+		BranchIfClear(reg.Carry());
 	}
 	void Core::BCS() {
-		BranchIfSet(reg_.Carry());
+		BranchIfSet(reg.Carry());
 	}
 	void Core::BNE() {
-		BranchIfClear(reg_.Zero());
+		BranchIfClear(reg.Zero());
 	}
 	void Core::BEQ() {
-		BranchIfSet(reg_.Zero());
+		BranchIfSet(reg.Zero());
 	}
 	void Core::BRK() {
 		// TODO
 	}
 	void Core::RTI() {
-		reg_.S += 3;
-		reg_.PC = mem_->ReadWord(reg_.S + StackOffset - 1);
-		reg_.P = mem_->Read(reg_.S + StackOffset - 2);
+		reg.S += 3;
+		reg.PC = mem->ReadWordCPU(reg.S + StackOffset - 1);
+		reg.P = mem->ReadByteCPU(reg.S + StackOffset - 2);
 	}
 	void Core::RTS() {
-		reg_.S += 2;
-		reg_.PC = mem_->ReadWord(reg_.S + StackOffset - 1);
-		reg_.PC++;
+		reg.S += 2;
+		reg.PC = mem->ReadWordCPU(reg.S + StackOffset - 1);
+		reg.PC++;
 	}
 	void Core::PHP() {
-		mem_->Write(reg_.S + StackOffset, reg_.P);
-		reg_.S--;
-		reg_.SetInterrupt(1);
+		mem->WriteByteCPU(reg.S + StackOffset, reg.P);
+		reg.S--;
+		reg.SetInterrupt(1);
 	}
 	void Core::PLP() {
-		reg_.S++;
-		reg_.P = mem_->Read(reg_.S + StackOffset);
+		reg.S++;
+		reg.P = mem->ReadByteCPU(reg.S + StackOffset);
 	}
 	void Core::PHA() {
-		mem_->Write(reg_.S + StackOffset, reg_.A);
-		reg_.S--;
+		mem->WriteByteCPU(reg.S + StackOffset, reg.A);
+		reg.S--;
 	}
 	void Core::PLA() {
-		reg_.S++;
-		reg_.A = mem_->Read(reg_.S + StackOffset);
-		SetIfZeroAndNegative(reg_.A, reg_);
+		reg.S++;
+		reg.A = mem->ReadByteCPU(reg.S + StackOffset);
+		SetIfZeroAndNegative(reg.A, reg);
 	}
 	void Core::DEY() {
-		reg_.Y--;
-		SetIfZeroAndNegative(reg_.Y, reg_);
+		reg.Y--;
+		SetIfZeroAndNegative(reg.Y, reg);
 	}
 	void Core::TAY() {
-		reg_.Y = reg_.A;
-		SetIfZeroAndNegative(reg_.Y, reg_);
+		reg.Y = reg.A;
+		SetIfZeroAndNegative(reg.Y, reg);
 	}
 	void Core::INY() {
-		reg_.Y++;
-		SetIfZeroAndNegative(reg_.Y, reg_);
+		reg.Y++;
+		SetIfZeroAndNegative(reg.Y, reg);
 	}
 	void Core::INX() {
-		reg_.X++;
-		SetIfZeroAndNegative(reg_.X, reg_);
+		reg.X++;
+		SetIfZeroAndNegative(reg.X, reg);
 	}
 	void Core::CLC() {
-		reg_.SetCarry(0U);
+		reg.SetCarry(0U);
 	}
 	void Core::SEC() {
-		reg_.SetCarry(1U);
+		reg.SetCarry(1U);
 	}
 	void Core::CLI() {
-		reg_.SetInterrupt(0U);
+		reg.SetInterrupt(0U);
 	}
 	void Core::SEI() {
-		reg_.SetInterrupt(1U);
+		reg.SetInterrupt(1U);
 	}
 	void Core::TYA() {
-		reg_.A = reg_.Y;
-		SetIfZeroAndNegative(reg_.A, reg_);
+		reg.A = reg.Y;
+		SetIfZeroAndNegative(reg.A, reg);
 	}
 	void Core::CLV() {
-		reg_.SetOverflow(0U);
+		reg.SetOverflow(0U);
 	}
 	void Core::CLD() {
-		reg_.SetDecimal(0);
+		reg.SetDecimal(0);
 	}
 	void Core::SED() {
-		reg_.SetDecimal(1);
+		reg.SetDecimal(1);
 	}
 	void Core::TXA() {
-		reg_.A = reg_.X;
-		SetIfZeroAndNegative(reg_.A, reg_);
+		reg.A = reg.X;
+		SetIfZeroAndNegative(reg.A, reg);
 	}
 	void Core::TXS() {
-		reg_.S = reg_.X;
+		reg.S = reg.X;
 	}
 	void Core::TAX() {
-		reg_.X = reg_.A;
-		SetIfZeroAndNegative(reg_.X, reg_);
+		reg.X = reg.A;
+		SetIfZeroAndNegative(reg.X, reg);
 	}
 	void Core::TSX() {
-		reg_.X = reg_.S;
-		SetIfZeroAndNegative(reg_.X, reg_);
+		reg.X = reg.S;
+		SetIfZeroAndNegative(reg.X, reg);
 	}
 	void Core::DEX() {
-		reg_.X--;
-		SetIfZeroAndNegative(reg_.X, reg_);
+		reg.X--;
+		SetIfZeroAndNegative(reg.X, reg);
 	}
 	void Core::NOP() {
 		// No operation
@@ -466,78 +466,78 @@ namespace cpu {
 
 	// **Helper functions**
 	void Core::Compare(uint8_t a, uint8_t b) {
-		reg_.SetCarry(a >= b);
-		reg_.SetZero(a == b);
-		reg_.SetIfNegative(a - b);
+		reg.SetCarry(a >= b);
+		reg.SetZero(a == b);
+		reg.SetIfNegative(a - b);
 	}
 	uint8_t Core::Relative(uint8_t address) {
 		// Returns the relative address for a signed number
 		return (address & 0x80) ? ~(uint8_t)(0x100U - address) + 1U  : address;
 	}
 	void Core::BranchIfClear(uint8_t value) {
-		uint8_t offset = Relative(mem_->Read(reg_.PC));
-		reg_.PC += value == 0 ? offset : 0U;
-		reg_.PC++;
+		uint8_t offset = Relative(mem->ReadByteCPU(reg.PC));
+		reg.PC += value == 0 ? offset : 0U;
+		reg.PC++;
 	}
 	void Core::BranchIfSet(uint8_t value) {
-		uint8_t offset = Relative(mem_->Read(reg_.PC));
-		reg_.PC += value == 1 ? offset : 0U;
-		reg_.PC++;
+		uint8_t offset = Relative(mem->ReadByteCPU(reg.PC));
+		reg.PC += value == 1 ? offset : 0U;
+		reg.PC++;
 	}
 
 	// **Addressing modes**
 	const Instruction Core::ZeroPageX(Instruction& ins) {
-		ins.address = mem_->Read(reg_.PC) + reg_.X;
-		ins.value = mem_->Read(ins.address);
-		reg_.PC++;
+		ins.address = mem->ReadByteCPU(reg.PC) + reg.X;
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC++;
 		return ins;
 	}
 	const Instruction Core::ZeroPageY(Instruction& ins) {
-		ins.address = mem_->Read(reg_.PC) + reg_.Y;
-		ins.value = mem_->Read(ins.address);
-		reg_.PC++;
+		ins.address = mem->ReadByteCPU(reg.PC) + reg.Y;
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC++;
 		return ins;
 	}
 	const Instruction Core::ZeroPage(Instruction& ins) {
-		ins.address = mem_->Read(reg_.PC);
-		ins.value = mem_->Read(ins.address);
-		reg_.PC++;
+		ins.address = mem->ReadByteCPU(reg.PC);
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC++;
 		return ins;
 	}
 	const Instruction Core::Immediate(Instruction& ins) {
-		ins.address = reg_.PC;
-		ins.value = mem_->Read(ins.address);
-		reg_.PC++;
+		ins.address = reg.PC;
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC++;
 		return ins;
 	}
 	const Instruction Core::Absolute(Instruction& ins) {
-		ins.address = mem_->ReadWord(reg_.PC);
-		ins.value = mem_->Read(ins.address);
-		reg_.PC += 2;
+		ins.address = mem->ReadWordCPU(reg.PC);
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC += 2;
 		return ins;
 	}
 	const Instruction Core::IndirectY(Instruction& ins) {
-		ins.address = mem_->ReadWord(mem_->Read(reg_.PC) + reg_.Y);
-		ins.value = mem_->Read(ins.address);
-		reg_.PC++;
+		ins.address = mem->ReadWordCPU(mem->ReadByteCPU(reg.PC) + reg.Y);
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC++;
 		return ins;
 	}
 	const Instruction Core::IndirectX(Instruction& ins) {
-		ins.address = mem_->ReadWord((mem_->Read(reg_.PC) + reg_.X) % 0x100);
-		ins.value = mem_->Read(ins.address);
-		reg_.PC++;
+		ins.address = mem->ReadWordCPU((mem->ReadByteCPU(reg.PC) + reg.X) % 0x100);
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC++;
 		return ins;
 	}
 	const Instruction Core::AbsoluteX(Instruction& ins) {
-		ins.address = mem_->ReadWord(reg_.PC) + reg_.X;
-		ins.value = mem_->Read(ins.address);
-		reg_.PC += 2;
+		ins.address = mem->ReadWordCPU(reg.PC) + reg.X;
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC += 2;
 		return ins;
 	}
 	const Instruction Core::AbsoluteY(Instruction& ins) {
-		ins.address = mem_->ReadWord(reg_.PC) + reg_.Y;
-		ins.value = mem_->Read(ins.address);
-		reg_.PC += 2;
+		ins.address = mem->ReadWordCPU(reg.PC) + reg.Y;
+		ins.value = mem->ReadByteCPU(ins.address);
+		reg.PC += 2;
 		return ins;
 	}
 	const Instruction Core::Accumulator(Instruction& ins) {

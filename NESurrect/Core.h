@@ -1,6 +1,6 @@
 #pragma once
 #include "CPURegisters.h"
-#include "CPUMemory.h"
+#include "Memory.h"
 
 namespace cpu {
 	struct Instruction {
@@ -13,14 +13,14 @@ namespace cpu {
 
 	class Core {
 	public:
-		Core(memory::CPUMemory *mem);
+		Core(mem::Memory *mem);
 		void Reset();
 		void ExecuteInstruction();
 
 		
 	private:
-		CPURegisters reg_;
-		memory::CPUMemory *mem_;
+		CPURegisters reg;
+		mem::Memory *mem;
 
 		// Addressing modes
 		const Instruction ZeroPageX(Instruction& ins);

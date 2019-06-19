@@ -1,7 +1,7 @@
 #include "NES.h"
 
 NES::NES() {
-	cpuMem_ = new memory::CPUMemory(memoryMapper);
+	cpuMem_ = new mem::Memory();
 	core_ = new cpu::Core(cpuMem_);
 	wrapper_ = new wrapper::SFMLWrapper();
 }

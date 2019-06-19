@@ -9,5 +9,6 @@ public:
 	void Run();
 private:
 	cpu::Core *core_;
+	mem::Memory *cpuMem_;
 	wrapper::Wrapper *wrapper_;
 };

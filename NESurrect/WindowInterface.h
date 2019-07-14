@@ -1,5 +1,4 @@
 #pragma once
-#include "SFML/Graphics.hpp"
 
 namespace wrapper {
 	class WindowInterface {

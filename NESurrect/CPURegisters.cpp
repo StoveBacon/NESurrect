@@ -1,48 +1,48 @@
 #include "CPURegisters.h"
 
 namespace cpu {
-	void CPURegisters::SetBit(uint8_t mask, uint8_t value) {
+	void CPURegisters::setBit(uint8_t mask, uint8_t value) {
 		if (value == 0) {
 			P = P & ~mask;
 		} else {
 			P = P | mask;
 		}
 	}
-	void CPURegisters::SetIfZero(uint8_t value) {
-		SetBit(ZeroMask, value == 0);
+	void CPURegisters::setIfZero(uint8_t value) {
+		setBit(ZERO_MASK, value == 0);
 	}
-	void CPURegisters::SetIfNegative(uint8_t value) {
-		SetBit(NegativeMask, (value >> 7) == 1);
+	void CPURegisters::setIfNegative(uint8_t value) {
+		setBit(NEGATIVE_MASK, (value >> 7) == 1);
 	}
-	void CPURegisters::SetZero(uint8_t value) {
-		SetBit(ZeroMask, value);
+	void CPURegisters::setZero(uint8_t value) {
+		setBit(ZERO_MASK, value);
 	}
-	void CPURegisters::SetCarry(uint8_t value) {
-		SetBit(CarryMask, value);
+	void CPURegisters::setCarry(uint8_t value) {
+		setBit(CARRY_MASK, value);
 	}
-	void CPURegisters::SetOverflow(uint8_t value) {
-		SetBit(OverflowMask, value);
+	void CPURegisters::setOverflow(uint8_t value) {
+		setBit(OVERFLOW_MASK, value);
 	}
-	void CPURegisters::SetInterrupt(uint8_t value) {
-		SetBit(InterruptDisMask, value);
+	void CPURegisters::setInterrupt(uint8_t value) {
+		setBit(INTERRUPT_DIS_MASK, value);
 	}
-	void CPURegisters::SetDecimal(uint8_t value) {
-		SetBit(DecimalMask, value);
+	void CPURegisters::setDecimal(uint8_t value) {
+		setBit(DECIMAL_MASK, value);
 	}
-	uint8_t CPURegisters::Carry() {
-		return ((P & CarryMask) > 0);
+	uint8_t CPURegisters::carry() {
+		return ((P & CARRY_MASK) > 0);
 	}
-	uint8_t CPURegisters::Negative() {
-		return ((P & NegativeMask) > 0);
+	uint8_t CPURegisters::negative() {
+		return ((P & NEGATIVE_MASK) > 0);
 	}
-	uint8_t CPURegisters::Overflow() {
-		return ((P & OverflowMask) > 0);
+	uint8_t CPURegisters::overflow() {
+		return ((P & OVERFLOW_MASK) > 0);
 	}
-	uint8_t CPURegisters::Zero() {
-		return ((P & ZeroMask) > 0);
+	uint8_t CPURegisters::zero() {
+		return ((P & ZERO_MASK) > 0);
 	}
-	void SetIfZeroAndNegative(const uint8_t& value, CPURegisters& registers) {
-		registers.SetIfZero(value);
-		registers.SetIfNegative(value);
+	void setIfZeroAndNegative(const uint8_t& value, CPURegisters& registers) {
+		registers.setIfZero(value);
+		registers.setIfNegative(value);
 	}
 }

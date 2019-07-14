@@ -1,40 +1,44 @@
 #pragma once
 #include <cstdint>
-#include <map>
+#include "MappedRegisters.h"
 
+namespace mem {
+	// These particular registers have unique logic on reads/writes that affect PPU registers
+	class MappedRegisters;
 
-namespace ppu {
-	// For information on what each of these is, visit:
-	// http://wiki.nesdev.com/w/index.php/PPU_registers
+	class BaseRegister : public MemoryValue {
+	public:
+		BaseRegister(MappedRegisters *mmr) { reg_ = mmr; }
+		~BaseRegister() {}
+	protected:
+		MappedRegisters *reg_;
+	};
 
-	// Define each register address and each offset into it
-	constexpr uint16_t PPUCtrl = 0x2000;
-	constexpr uint8_t NMIEnable = 0x80;
-	constexpr uint8_t PPUMaster = 0x40;
-	constexpr uint8_t SpriteHeight = 0x20;
-	constexpr uint8_t BGTile = 0x10;
-	constexpr uint8_t SpriteTile = 0x08;
-	constexpr uint8_t IncMode = 0x40;
-	constexpr uint8_t Nametable = 0x03;
+	class StatusRegister : public BaseRegister {
+	public:
+		uint8_t get();
+	};
 
-	constexpr uint16_t PPUMask = 0x2001;
-	constexpr uint8_t ColorEmphasis = 0xE0;
-	constexpr uint8_t SpriteEnable = 0x10;
-	constexpr uint8_t BGEnable = 0x08;
-	constexpr uint8_t SpriteLC = 0x04;
-	constexpr uint8_t SpriteRC = 0x02;
-	constexpr uint8_t Grayscale = 0x01;
+	class OamDataRegister : public BaseRegister {
+	public:
+		void set(const uint8_t &val);
+	};
 
-	constexpr uint16_t PPUStatus = 0x2002;
-	constexpr uint8_t VBlank = 0x80;
-	constexpr uint8_t SpriteZero = 0x40;
-	constexpr uint8_t SpriteOverflow = 0x20;
-	
-	// The rest of the registers are for transfering data, they don't need any masks
-	constexpr uint16_t OAMAddress = 0x2003;
-	constexpr uint16_t OAMData = 0x2004;
-	constexpr uint16_t PPUScroll = 0x2005;
-	constexpr uint16_t PPUAddress = 0x2006;
-	constexpr uint16_t PPUData = 0x2007;
-	constexpr uint16_t OAMDump = 0x4014;
+	class DmaStartRegister : public BaseRegister {
+	public:
+		void set(const uint8_t &val);
+	};
+
+	// Scroll and internal address both use double writes, and share an 8 bit latch between the two.
+	class DoubleWriteRegister : public BaseRegister {
+	public:
+		void set(const uint8_t &val);
+	};
+
+	// Handles reads and writes to VRAM
+	class VramRWRegister : public BaseRegister {
+	public:
+		uint8_t get();
+		void set(const uint8_t &val);
+	};
 }

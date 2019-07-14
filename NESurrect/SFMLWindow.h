@@ -6,7 +6,7 @@ namespace wrapper {
 	class SFMLWindow : public WindowInterface {
 	public:
 		SFMLWindow();
-		const sf::RenderWindow& window();
+		sf::RenderWindow* getWindow() { return &window_; }
 		void ProcessEventQueue();
 	private:
 		sf::RenderWindow window_;

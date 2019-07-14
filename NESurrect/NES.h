@@ -1,14 +1,16 @@
 #pragma once
 #include "Core.h"
+#include "PPU.h"
 #include "WrapperTypes.h"
 
 class NES {
 public:
 	NES();
 	~NES();
-	void Run();
+	void run();
 private:
 	cpu::Core *core_;
-	mem::Memory *cpuMem_;
+	ppu::PPU *ppu_;
+	mem::Memory *memory_;
 	wrapper::Wrapper *wrapper_;
 };

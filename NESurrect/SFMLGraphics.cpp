@@ -1,11 +1,16 @@
 #include "SFMLGraphics.h"
 
 namespace wrapper {
-	void SFMLGraphics::DrawPixels(const std::vector<Pixel> &pixels) {
-		
-	}
+	void SFMLGraphics::DrawPixels(const std::vector<uint8_t> &pixels) {
+		const uint8_t *pixelArray = pixels.data();
+		frame.update(pixelArray);
 
-	void SFMLGraphics::DrawToHardware(const std::vector<Pixel> &pixels) {
+		window_->clear(sf::Color::Black);
 
+		sf::Sprite frameSprite;
+		frameSprite.setTexture(frame);
+		window_->draw(frameSprite);
+
+		window_->display();
 	}
 }

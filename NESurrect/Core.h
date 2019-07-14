@@ -14,25 +14,25 @@ namespace cpu {
 	class Core {
 	public:
 		Core(mem::Memory *mem);
-		void Reset();
-		void ExecuteInstruction();
+		void reset();
+		void executeInstruction();
 
 		
 	private:
 		CPURegisters reg;
-		mem::Memory *mem;
+		mem::Memory *mem_;
 
 		// Addressing modes
-		const Instruction ZeroPageX(Instruction& ins);
-		const Instruction ZeroPageY(Instruction& ins);
-		const Instruction ZeroPage(Instruction& ins);
-		const Instruction Immediate(Instruction& ins);
-		const Instruction Absolute(Instruction& ins);
-		const Instruction IndirectY(Instruction& ins);
-		const Instruction IndirectX(Instruction& ins);
-		const Instruction AbsoluteX(Instruction& ins);
-		const Instruction AbsoluteY(Instruction& ins);
-		const Instruction Accumulator(Instruction& ins);
+		const Instruction zeroPageX(Instruction& ins);
+		const Instruction zeroPageY(Instruction& ins);
+		const Instruction zeroPage(Instruction& ins);
+		const Instruction immediate(Instruction& ins);
+		const Instruction absolute(Instruction& ins);
+		const Instruction indirectY(Instruction& ins);
+		const Instruction indirectX(Instruction& ins);
+		const Instruction absoluteX(Instruction& ins);
+		const Instruction absoluteY(Instruction& ins);
+		const Instruction accumulator(Instruction& ins);
 
 		// Addressing operations
 		void ORA(const Instruction& ins);
@@ -95,9 +95,9 @@ namespace cpu {
 		void DEX();
 		void NOP();
 
-		uint8_t Relative(uint8_t address);
-		void Compare(uint8_t a, uint8_t b);
-		void BranchIfClear(uint8_t value);
-		void BranchIfSet(uint8_t value);
+		uint8_t relative(uint8_t address);
+		void compare(uint8_t a, uint8_t b);
+		void branchIfClear(uint8_t value);
+		void branchIfSet(uint8_t value);
 	};
 }

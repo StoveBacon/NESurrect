@@ -2,7 +2,7 @@
 
 int main() {
 	NES nes;
-	nes.Run();
+	nes.run();
 	
 	return 0;
 }

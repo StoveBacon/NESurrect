@@ -18,7 +18,7 @@ namespace mem {
 		value_ = setOrClear ? (value_ ^ mask) : (value_ & ~mask);
 	}
 
-	void MemoryValue::increment(uint16_t amount) {
+	void MemoryValue::increment(uint8_t amount) {
 		value_ += amount;
 	}
 }

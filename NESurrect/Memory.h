@@ -4,6 +4,7 @@
 #include "MappedRegisters.h"
 #include "MemoryValue.h"
 #include "Constants.h"
+#include "Mapper.h"
 
 namespace mem {
 	class MappedRegister;
@@ -31,5 +32,7 @@ namespace mem {
 		MemComponent cartridgeMemory_;
 
 		MappedRegisters mmr_;
+
+		Mapper mapper_;
 	};
 }

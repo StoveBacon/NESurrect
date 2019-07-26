@@ -22,6 +22,16 @@ namespace mem {
 			memory_.push_back(new MemoryValue);
 		}
 
+		for (int i = 0; i < VRAM_SIZE; i++) {
+			vram_.push_back(new MemoryValue);
+		}
+
+		for (int i = 0; i < OAM_SIZE; i++) {
+			attributeMemory_.push_back(new MemoryValue);
+		}
+
+		mapper_.Init(memory_, vram_);
+		mapper_.LoadCartridge("./DonkeyKong.nes");
 	}
 
 	Memory::~Memory()
@@ -32,6 +42,16 @@ namespace mem {
 				memory_[i] = nullptr;
 			}
 		}
+
+		for (int i = 0; i < VRAM_SIZE; i++) {
+			delete vram_[i];
+			vram_[i] = nullptr;
+		}
+
+		for (int i = 0; i < OAM_SIZE; i++) {
+			delete attributeMemory_[i];
+			attributeMemory_[i] = nullptr;
+		}
 	}
 
 	uint8_t Memory::readByte(uint16_t address) {
@@ -40,8 +60,8 @@ namespace mem {
 
 	uint16_t Memory::readWord(uint16_t address) {
 		// TODO: zero page wraparound
-		uint16_t retval = readByte(address) << 8;
-		retval = retval & readByte(address + 1);
+		uint16_t retval = readByte(address);
+		retval = retval ^ (readByte(address + 1) << 8);
 		return retval;
 	}
 

@@ -43,6 +43,8 @@ constexpr uint16_t REG_DATA = 0x2007;
 constexpr uint16_t REG_OAM_DUMP = 0x4014;
 
 // Memory sizes, table sizes, so on
+constexpr uint16_t VRAM_SIZE = 0x4000;
+constexpr uint16_t OAM_SIZE = 0x100;
 constexpr uint16_t NAMETABLE_START = 0x2000;
 constexpr uint16_t NAMETABLE_ENTRY_SIZE = 0x10;
 constexpr uint16_t NAMETABLE_LENGTH = 0x400;

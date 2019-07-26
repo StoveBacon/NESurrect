@@ -16,7 +16,7 @@ namespace mem {
 		uint8_t value() { return value_;  }
 		virtual void set(const uint8_t &val) { value_ = val; }
 
-		void increment(uint16_t amount = 1);
+		void increment(uint8_t amount = 1U);
 
 		// Helper function for handling bits from a register
 		uint16_t getFlag(uint16_t mask);

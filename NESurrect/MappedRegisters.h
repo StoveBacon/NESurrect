@@ -5,7 +5,7 @@
 
 // Wrap up all the mapping and special logic involved in certain PPU mapped registers
 namespace mem {
-	using MemComponent = const std::vector<MemoryValue*>&;
+	using MemComponent = const std::vector<MemoryValue*>*;
 
 	class MappedRegisters {
 	public:
@@ -19,9 +19,9 @@ namespace mem {
 		uint16_t vramAddress;
 		DataLatch latch;
 
-		std::vector<MemoryValue*> memory;
-		std::vector<MemoryValue*> vram;
-		std::vector<MemoryValue*> oam;
+		MemComponent memory;
+		MemComponent vram;
+		MemComponent oam;
 	};
 
 	// These particular registers have unique logic on reads/writes that affect PPU registers

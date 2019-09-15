@@ -12,16 +12,26 @@ namespace ppu {
 		void runCycle();
 
 	private:
-		uint16_t generateBGPixel();
+		void generateBGPixel();
 
 		std::vector<uint8_t> pixels_;
 		int cycleNum_;
+		int scanlineNum_;
+
+		enum class State { LOADING, PRERENDER, RENDER, POSTRENDER, VBLANK_START, VBLANK, VBLANK_END };
+		State state;
+		void updateState();
+
+		void startVBlank();
+		void endVBlank();
 
 		// Background rendering
-		uint8_t vramAddress_;
+		uint16_t vramAddress_;
 		uint8_t fineXScroll_;
 		uint16_t bitmapRegister_[2];
 		uint8_t paletteRegister_[2];
+		uint8_t nametable_[32][30];
+		uint8_t attributetable_[32][30];
 
 		// Sprite rendering
 

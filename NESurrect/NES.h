@@ -1,6 +1,8 @@
 #pragma once
 #include "Core.h"
 #include "PPU.h"
+#include "FileManager.h"
+#include "Debug.h"
 #include "WrapperTypes.h"
 
 class NES {
@@ -8,9 +10,9 @@ public:
 	NES();
 	~NES();
 	void run();
-private:
-	cpu::Core *core_;
-	ppu::PPU *ppu_;
-	mem::Memory *memory_;
-	wrapper::Wrapper *wrapper_;
+
+	cpu::Core *core;
+	ppu::PPU *ppu;
+	mem::Memory *memory;
+	wrapper::Wrapper *wrapper;
 };

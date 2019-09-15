@@ -11,10 +11,10 @@ namespace mem {
 		registers.push_back(new StatusRegister(this));
 		registers.push_back(new BaseRegister(this));
 		registers.push_back(new OamDataRegister(this));
-		registers.push_back(new DmaStartRegister(this));
 		registers.push_back(new DoubleWriteRegister(this));
 		registers.push_back(new DoubleWriteRegister(this));
 		registers.push_back(new VramRWRegister(this));
+		registers.push_back(new DmaStartRegister(this));
 	}
 
 	std::vector<MemoryValue*> MappedRegisters::GetRegisters()
@@ -30,7 +30,7 @@ namespace mem {
 
 	uint8_t StatusRegister::get() {
 		uint8_t oldVal = value_;
-		this->setBits(true, MASK_VBLANK);
+		this->setBits(false, MASK_VBLANK);
 		reg_->latch.clear();
 		return oldVal;
 	}
@@ -46,7 +46,7 @@ namespace mem {
 
 		// Address serves as a page offset of memory to dump into the OAM
 		for (uint16_t i = 0; i < 256; i++) {
-			reg_->oam[i]->set(reg_->memory[i + address]->get());
+			reg_->oam->at(i)->set(reg_->memory->at(i + address)->get());
 		}
 	}
 
@@ -59,13 +59,13 @@ namespace mem {
 	}
 
 	uint8_t VramRWRegister::get() {
-		uint8_t retval = reg_->vram[reg_->vramAddress]->get();
+		uint8_t retval = reg_->vram->at(reg_->vramAddress)->get();
 		reg_->IncrementVramAddress();
 		return retval;
 	}
 
 	void VramRWRegister::set(const uint8_t & val) {
-		reg_->vram[reg_->vramAddress]->set(val);
+		reg_->vram->at(reg_->vramAddress)->set(val);
 		reg_->IncrementVramAddress();
 	}
 }

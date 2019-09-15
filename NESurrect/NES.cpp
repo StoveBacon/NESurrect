@@ -1,26 +1,28 @@
 #include "NES.h"
 
 NES::NES() {
-	memory_ = new mem::Memory();
-	core_ = new cpu::Core(memory_);
-	wrapper_ = new wrapper::SFMLWrapper();
-	ppu_ = new ppu::PPU(memory_, wrapper_);
+	FileManager::init();
+	memory = new mem::Memory();
+	core = new cpu::Core(this);
+	wrapper = new wrapper::SFMLWrapper();
+	ppu = new ppu::PPU(memory, wrapper);
 }
 
 NES::~NES() {
-	delete ppu_;
-	delete wrapper_;
-	delete core_;
-	delete memory_;
+	delete ppu;
+	delete wrapper;
+	delete core;
+	delete memory;
+	FileManager::close();
 }
 
 void NES::run() {
-	while (wrapper_->isOpen()) {
-		core_->executeInstruction();
+	while (wrapper->isOpen()) {
+		core->executeInstruction();
 		// Loose approximation, to be updated later
 		for (int i = 0; i < 12; i++) {
-			ppu_->runCycle();
+			//ppu->runCycle();
 		}
-		wrapper_->ProcessEventQueue();
+		wrapper->ProcessEventQueue();
 	}
 }

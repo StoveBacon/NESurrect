@@ -3,6 +3,7 @@
 #include "SFML/Window.hpp"
 #include "SFML/System.hpp"
 #include "Wrapper.h"
+#include <vector>
 
 namespace wrapper {
 	class SFMLWrapper : public Wrapper {
@@ -14,5 +15,6 @@ namespace wrapper {
 	private:
 		sf::RenderWindow window_;
 		sf::Texture frame_;
+		sf::Sprite sprite_;
 	};
 }
